@@ -41,7 +41,7 @@ export const PackagesAdminTable = () => {
     }
   }, [dispatch, token]);
 
-const payload = parseJwt(token)
+  const payload = parseJwt(token);
 
   return (
     <Box sx={{ width: '100%', typography: 'body1', p: 2 }}>
@@ -52,6 +52,18 @@ const payload = parseJwt(token)
           <TabList
             onChange={handleChange}
             aria-label="tabs de Pacotes"
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              '.MuiTabs-flexContainer': {
+                justifyContent: { xs: 'flex-start', sm: 'center' },
+              },
+              '.MuiTab-root': {
+                minWidth: { xs: 'auto', sm: 160 },
+                padding: { xs: '6px 12px', sm: '12px 16px' },
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              },
+            }}
             slotProps={{
               indicator: {
                 sx: {
@@ -98,7 +110,7 @@ const payload = parseJwt(token)
             loading={loading}
             error={error}
             onEdit={handleEdit}
-             role={payload.role}
+            role={payload.role}
           />
         </TabPanel>
         <TabPanel value="2">

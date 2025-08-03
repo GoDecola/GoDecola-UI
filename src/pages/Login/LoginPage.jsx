@@ -6,6 +6,8 @@ import {
   goToRecPassMail,
   goToSignUp,
   goToHome,
+  goToHomeAdmin,
+  goToHomeSupport,
 } from "../../routes/coordinator";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -76,6 +78,7 @@ export default function LoginPage() {
       const { token } = response;
       const payload = parseJwt(token);
       const userId = payload?.nameid || payload?.sub || null;
+      const role = parseJwt(token).role;
 
       if (!userId) throw new Error("ID do usuário não encontrado no token");
 
@@ -89,7 +92,20 @@ export default function LoginPage() {
       }
 
       resetForm();
-      goToHome(navigate);
+
+      switch (role) {
+        case "USER":
+          goToHome(navigate);
+          break;
+        case "ADMIN":
+          goToHomeAdmin(navigate);
+          break;
+        case "SUPPORT":
+          goToHomeSupport(navigate);
+          break;
+        default:
+          navigate("/unauthorized");
+      }
     } catch (error) {
       console.error("Erro no login:", error);
       const errorMessage =

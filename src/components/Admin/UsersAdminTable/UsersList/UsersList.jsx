@@ -13,78 +13,63 @@ import {
   IconButton,
 } from "@mui/material";
 import { Edit, Delete, Visibility } from "@mui/icons-material";
-import { deleteTravelPackageById } from "../../../../store/actions/travelPackagesActions";
-import PackageModal from "./PackageModal";
+import {
+  deleteUserById,
+  fetchUsers,
+} from "../../../../store/actions/userActions";
+import UserModal from "./UserModal";
+import { formatDate } from "../../../../utils/formatDate";
 
-const PackagesList = ({ packages, loading, error, onEdit, role }) => {
-  
+const UserList = ({ clients, loading, error, onEdit, role }) => {
+  const dispatch = useDispatch();
+  const [openDetails, setOpenDetails] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userToDelete, setUserToDelete] = useState(null);
+
+  const handleViewClick = (id) => {
+    const user = clients.find((u) => u.id === id);
+    setSelectedUser(user);
+    setOpenDetails(true);
+  };
+
+  const handleCloseDetails = () => {
+    setOpenDetails(false);
+    setSelectedUser(null);
+  };
+
+  const handleDeleteClick = (id) => {
+    setUserToDelete(id);
+    setOpenDelete(true);
+  };
+
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
+    setUserToDelete(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await dispatch(deleteUserById(userToDelete)).unwrap();
+      handleCloseDelete();
+      dispatch(fetchUsers());
+    } catch (err) {
+      console.error(err.message || "Erro ao excluir o usuário");
+    }
+  };
+
   const columns = [
-    { field: "id", headerName: "ID", minWidth: 70 },
-    { field: "title", headerName: "Título", minWidth: 218 },
+    { field: "id", headerName: "ID", minWidth: 300 },
+    { field: "firstName", headerName: "Nome", minWidth: 150 },
+    { field: "lastName", headerName: "Sobrenome", minWidth: 198 },
+    { field: "email", headerName: "Email", minWidth: 200 },
+    { field: "document", headerName: "Documento", minWidth: 120 },
+    { field: "passaport", headerName: "Passaporte", minWidth: 120 },
     {
-      field: "destination",
-      headerName: "Destino",
-      minWidth: 110,
-    },
-    {
-      field: "price",
-      headerName: "Preço em (R$)",
+      field: "createdAt",
+      headerName: "Data de Criação",
       minWidth: 120,
-
-      type: "number",
-      cellClassName: "align-left",
-      headerClassName: "align-left-header",
-    },
-    {
-      field: "type",
-      headerName: "Tipo",
-      minWidth: 120,
-    },
-    {
-      field: "startDate",
-      headerName: "Data de Início",
-      minWidth: 120,
-      valueFormatter: (value) =>
-        new Date(value).toLocaleDateString("pt-BR", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        }),
-    },
-    {
-      field: "endDate",
-      headerName: "Data de Término",
-      minWidth: 120,
-      valueFormatter: (value) =>
-        new Date(value).toLocaleDateString("pt-BR", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        }),
-    },
-    {
-      field: "averageRating",
-      headerName: "Avaliação",
-      migrants: { type: "number" },
-      minWidth: 90,
-      type: "number",
-      valueGetter: () => 0, // Placeholder até a API retornar
-    },
-
-    {
-      field: "isCurrentlyOnPromotion",
-      headerName: "Promoção",
-      minWidth: 100,
-      renderCell: ({ value }) => {
-        return value ? "Sim" : "Não";
-      },
-    },
-
-    {
-      field: "isActive",
-      headerName: "Ativo",
-      minWidth: 80,
-      renderCell: ({ value }) => (value ? "Sim" : "Não"),
+      valueFormatter: (value) => formatDate(value),
     },
     {
       field: "actions",
@@ -93,89 +78,50 @@ const PackagesList = ({ packages, loading, error, onEdit, role }) => {
       renderCell: (params) => (
         <Box>
           <IconButton
-            onClick={() => params.row.onView(params.row.id)}
+            onClick={() => handleViewClick(params.row.id)}
             color="default"
-            aria-label="Visualizar pacote"
+            aria-label="Visualizar usuário"
             sx={{ color: "var(--icons-login-color)" }}
           >
             <Visibility />
           </IconButton>
-          {role === "ADMIN" ? (
+          {role === "ADMIN" && (
             <>
               <IconButton
                 onClick={() => params.row.onEdit(params.row.id)}
                 color="primary"
-                aria-label="Editar pacote"
+                aria-label="Editar usuário"
               >
                 <Edit />
               </IconButton>
               <IconButton
                 onClick={() => params.row.onDelete(params.row.id)}
                 color="error"
-                aria-label="Excluir pacote"
+                aria-label="Excluir usuário"
               >
                 <Delete />
               </IconButton>
             </>
-          ) : (
-            <></>
           )}
         </Box>
       ),
     },
   ];
 
-  const dispatch = useDispatch();
-  const [openDetails, setOpenDetails] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
-  const [selectedPackage, setSelectedPackage] = useState(null);
-  const [packageToDelete, setPackageToDelete] = useState(null);
-
-  const handleViewClick = (id) => {
-    const pkg = packages.find((p) => p.id === id);
-    setSelectedPackage(pkg);
-    setOpenDetails(true);
-  };
-
-  const handleCloseDetails = () => {
-    setOpenDetails(false);
-    setSelectedPackage(null);
-  };
-
-  const handleDeleteClick = (id) => {
-    setPackageToDelete(id);
-    setOpenDelete(true);
-  };
-
-  const handleCloseDelete = () => {
-    setOpenDelete(false);
-    setPackageToDelete(null);
-  };
-
-  const handleConfirmDelete = async () => {
-    try {
-      await dispatch(deleteTravelPackageById(packageToDelete)).unwrap();
-      handleCloseDelete();
-    } catch (err) {
-      console.error(err.message || "Erro ao excluir o pacote");
-    }
-  };
-
-  const rows = packages.map((pkg) => ({
-    id: pkg.id,
-    title: pkg.title,
-    destination: pkg.destination,
-    price: pkg.price,
-    type: pkg.packageType,
-    startDate: pkg.startDate,
-    endDate: pkg.endDate,
-    averageRating: 0,
-    isCurrentlyOnPromotion: pkg.isCurrentlyOnPromotion,
-    isActive: pkg.isActive,
-    onEdit,
-    onDelete: handleDeleteClick,
-    onView: handleViewClick,
-  }));
+  const rows = Array.isArray(clients)
+    ? clients.map((user) => ({
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        document: user.document,
+        passaport: user.passaport || "N/A",
+        createdAt: user.createdAt,
+        onEdit,
+        onDelete: handleDeleteClick,
+        onView: handleViewClick,
+      }))
+    : [];
 
   const paginationModel = { page: 0, pageSize: 5 };
 
@@ -192,9 +138,9 @@ const PackagesList = ({ packages, loading, error, onEdit, role }) => {
         <Typography color="var(--primary-text-color)">Carregando...</Typography>
       )}
       {error && <Typography color="error">Erro: {error}</Typography>}
-      {!loading && !error && packages.length === 0 && (
+      {!loading && !error && (!clients || clients.length === 0) && (
         <Typography color="var(--primary-text-color)">
-          Nenhum pacote disponível.
+          Nenhum usuário disponível.
         </Typography>
       )}
       <DataGrid
@@ -212,6 +158,9 @@ const PackagesList = ({ packages, loading, error, onEdit, role }) => {
           "& .MuiDataGrid-columnHeader": {
             backgroundColor: "var(--orange-avanade)",
             color: "var(--secondary-text-color)",
+          },
+          "& .MuiDataGrid-filler": {
+            backgroundColor: "var(--orange-avanade)",
           },
           "& .MuiDataGrid-cell": {
             color: "var(--text-footer)",
@@ -243,17 +192,16 @@ const PackagesList = ({ packages, loading, error, onEdit, role }) => {
           },
         }}
       />
-      <PackageModal
+      <UserModal
         open={openDetails}
         onClose={handleCloseDetails}
-        selectedPackage={selectedPackage}
+        selectedUser={selectedUser}
         handleCloseDetails={handleCloseDetails}
       />
-      {/* Modal de Confirmação de Exclusão */}
       <Dialog open={openDelete} onClose={handleCloseDelete}>
         <DialogTitle>Confirmar Exclusão</DialogTitle>
         <DialogContent>
-          <Typography>Deseja realmente excluir este pacote?</Typography>
+          <Typography>Deseja realmente excluir este usuário?</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDelete} variant="outlined">
@@ -273,4 +221,4 @@ const PackagesList = ({ packages, loading, error, onEdit, role }) => {
   );
 };
 
-export default PackagesList;
+export default UserList;

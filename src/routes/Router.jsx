@@ -1,24 +1,26 @@
-import { Routes, Route } from 'react-router-dom'
-import HomePage from '../pages/Home/HomePage'
-import HomePageAdmin from '../pages/Home/HomePageAdmin/HomePageAdmin'
-import HomePageSupport from '../pages/Home/HomePageSupport/HomePageSupport'
-import ErrorPage from '../pages/Error/ErrorPage'
-import SignUpPage from '../pages/SignUp/SignUpPage'
-import LoginPage from '../pages/Login/LoginPage'
-import RecPasswordEmailPage from '../pages/RecPasswordEmail/RecPassMailPage'
-import RecoveryPasswordPage from '../pages/RecoveryPassword/RecoveryPasswordPage'
-import PackageDetailsPage from '../pages/PackageDetails/PackageDetailsPage'
-import SearchPackagesPage from '../pages/SearchPackages/SearchPackagesPage'
-import AllReviewsPage from '../pages/Review/AllReviewsPage'
-import BookingPage from '../pages/Booking/BookingPage'
-import CheckoutPage from '../pages/Checkout/CheckoutPage'
-import PaymentSuccess from '../pages/Payment/PaymentSuccess'
-import PaymentFailure from '../pages/Payment/PaymentFailure'
-import PaymentPending from '../pages/Payment/PaymentPending'
-import ProfilePage from '../pages/Profile/ProfilePage'
-import WishListPage from '../pages/WishList/WishListPage'
-import HistoryPage from '../pages/History/HistoryPage'
-import MainLayout from '../components/Layout'
+import { Routes, Route } from "react-router-dom";
+import HomePage from "../pages/Home/HomePage";
+import HomePageAdmin from "../pages/Home/HomePageAdmin/HomePageAdmin";
+import HomePageSupport from "../pages/Home/HomePageSupport/HomePageSupport";
+import ErrorPage from "../pages/Error/ErrorPage";
+import SignUpPage from "../pages/SignUp/SignUpPage";
+import LoginPage from "../pages/Login/LoginPage";
+import RecPasswordEmailPage from "../pages/RecPasswordEmail/RecPassMailPage";
+import RecoveryPasswordPage from "../pages/RecoveryPassword/RecoveryPasswordPage";
+import PackageDetailsPage from "../pages/PackageDetails/PackageDetailsPage";
+import SearchPackagesPage from "../pages/SearchPackages/SearchPackagesPage";
+import AllReviewsPage from "../pages/Review/AllReviewsPage";
+import BookingPage from "../pages/Booking/BookingPage";
+import CheckoutPage from "../pages/Checkout/CheckoutPage";
+import PaymentSuccess from "../pages/Payment/PaymentSuccess";
+import PaymentFailure from "../pages/Payment/PaymentFailure";
+import PaymentPending from "../pages/Payment/PaymentPending";
+import ProfilePage from "../pages/Profile/ProfilePage";
+import WishListPage from "../pages/WishList/WishListPage";
+import HistoryPage from "../pages/History/HistoryPage";
+import MainLayout from "../components/Layout";
+import PrivateRoute from "../components/PrivateRoute";
+import UnauthorizedPage from '../pages/Unauthorized/UnauthorizedPage'
 
 export const Router = () => {
   return (
@@ -28,24 +30,93 @@ export const Router = () => {
         <Route path="signup" element={<SignUpPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="recpassmail" element={<RecPasswordEmailPage />} />
-        <Route path="recoverypassword" element={<RecoveryPasswordPage />} />
+        <Route path="recoverypassword" element={<RecoveryPasswordPage />} />A
         <Route path="package-details/:id" element={<PackageDetailsPage />} />
         <Route path="search-packages" element={<SearchPackagesPage />} />
         <Route path="all-reviews" element={<AllReviewsPage />} />
-        <Route path="booking" element={<BookingPage />} />
-        <Route path="checkout" element={<CheckoutPage />} />
-        <Route path="payment/success/:paymentId" element={<PaymentSuccess />} />
-        <Route path="payment/pending/:paymentId" element={<PaymentPending />} />
-        <Route path="payment/failure/:paymentId" element={<PaymentFailure />} />
-        <Route path="payment/failure" element={<PaymentFailure />} />
-        <Route path="profile" element={<ProfilePage />} />
-        <Route path="wishlist" element={<WishListPage />} />
-        <Route path="history" element={<HistoryPage />} />
-        <Route path="home-admin" element={<HomePageAdmin />} />
-        <Route path="home-support" element={<HomePageSupport />} />
+        <Route
+          path="booking"
+          element={
+            <PrivateRoute>
+              <BookingPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="checkout"
+          element={
+            <PrivateRoute>
+              <CheckoutPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="payment/success/:paymentId"
+          element={
+            <PrivateRoute>
+              <PaymentSuccess />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="payment/pending/:paymentId"
+          element={
+            <PrivateRoute>
+              <PaymentPending />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="payment/failure/:paymentId"
+          element={
+            <PrivateRoute>
+              <PaymentFailure />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="profile"
+          element={
+            <PrivateRoute>
+              <ProfilePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="wishlist"
+          element={
+            <PrivateRoute>
+              <WishListPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="history"
+          element={
+            <PrivateRoute>
+              <HistoryPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="home-admin"
+          element={
+            <PrivateRoute roleRequired="ADMIN">
+              <HomePageAdmin />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="home-support"
+          element={
+            <PrivateRoute roleRequired="SUPPORT">
+              <HomePageSupport />
+            </PrivateRoute>
+          }
+        />
+        <Route path="unauthorized" element={<UnauthorizedPage />} />
         <Route path="*" element={<ErrorPage />} />
       </Route>
     </Routes>
-    
   );
 };

@@ -7,9 +7,9 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import { Typography } from '@mui/material'
-import { BookingsAdminList } from '../../../components/Admin/BookingsAdminList/BookingsAdminList'
-import { ClientsAdminView } from '../../../components/Admin/ClientsAdminView/ClientsAdminView'
-import { CommentsAdminModeration } from '../../../components/Admin/CommentsAdminModeration/CommentsAdminModeration'
+import  BookingsAdminTable from '../../../components/Admin/BookingsAdminTable/BookingsAdminTable'
+import { UsersAdminTable } from '../../../components/Admin/UsersAdminTable/UsersAdminTable'
+import { ReviewsAdminTable } from '../../../components/Admin/ReviewsAdminTable/ReviewsAdminTable'
 import { PackagesAdminTable } from '../../../components/Admin/PackagesAdminTable/PackagesAdminTable'
 import { SalesMetrics } from '../../../components/Admin/SalesMetrics/SalesMetrics'
 import useIsMobile from '../../../hooks/useIsMobile';
@@ -38,11 +38,11 @@ const HomePageAdmin = () => {
             case 'packages':
                 return <PackagesAdminTable />;
             case 'bookings':
-                return <BookingsAdminList />;
+                return <BookingsAdminTable />;
             case 'clients':
-                return <ClientsAdminView />;
+                return <UsersAdminTable />;
             case 'comments':
-                return <CommentsAdminModeration />;
+                return <ReviewsAdminTable />;
             default:
                 return (
                     <Typography variant="h6" sx={{ mt: 3, textAlign: 'center', color: 'var(--primary-text-color)' }}>
