@@ -1,10 +1,10 @@
-import NotFoundPage from "../../assets/NotFoundPage.png";
+import UnauthorizedUser from "../../assets/UnauthorizedUser.png";
 import { Typography, Box, Button } from "@mui/material";
 import { goToHome } from "../../routes/coordinator";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
-const ErrorPage = () => {
+const UnauthorizedPage = () => {
   const navigate = useNavigate();
   return (
     <Box
@@ -32,7 +32,7 @@ const ErrorPage = () => {
           },
         }}
       >
-        404
+        401
       </Typography>
       <Typography
         variant="h3"
@@ -45,12 +45,12 @@ const ErrorPage = () => {
           },
         }}
       >
-        Página não encontrada!
+        Autorização requerida!
       </Typography>
       <Box
         component="img"
-        src={NotFoundPage}
-        alt="Página não encontrada!"
+        src={UnauthorizedUser}
+        alt="Autorização requerida!"
         sx={{ maxWidth: "100%", height: "auto", filter: "var(--logo-filter)" }}
       />
 
@@ -75,4 +75,4 @@ const ErrorPage = () => {
   );
 };
 
-export default ErrorPage;
+export default UnauthorizedPage;

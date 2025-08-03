@@ -7,8 +7,24 @@ export const fetchBookings = createAsyncThunk(
     try {
       const { auth } = getState();
       const response = await bookingService.getbookings(auth.token);
-      console.log('Reservas recuperadas:', response);
-      return response;
+
+      const formattedBookings = response.map(booking => ({
+        ...booking,
+        totalPrice: (parseFloat(booking.totalPrice) / 100).toFixed(2),
+        status: {
+          PENDING: "Pendente",
+          CONFIRMED: "Confirmada",
+          USED: "Usada",
+          CANCELLED: "Cancelada",
+        }[booking.status] || booking.status,
+        travelPackage: {
+          ...booking.travelPackage,
+          price: (parseFloat(booking.travelPackage.price) / 100).toFixed(2),
+        },
+      }));
+
+      console.log('Reservas recuperadas:', formattedBookings);
+      return formattedBookings;
     } catch (error) {
       console.error('Erro ao buscar reservas:', error.response?.data || error.message);
       return rejectWithValue(error.response?.data || error.message);

@@ -9,34 +9,31 @@ import { fetchTravelPackages } from "../../../store/actions/travelPackagesAction
 import { fetchUsers } from "../../../store/actions/userActions";
 import { fetchBookings } from "../../../store/actions/bookingActions";
 import PackagesList from "../../../components/Admin/PackagesAdminTable/PackagesList/PackagesList";
-import { parseJwt } from '../../../utils/jwt'
+import { parseJwt } from "../../../utils/jwt";
+import BookingsAdminTable from "../../../components/Admin/BookingsAdminTable/BookingsAdminTable";
+import UserList from "../../../components/Admin/UsersAdminTable/UsersList/UsersList";
 
 const HomePageSupport = () => {
   const dispatch = useDispatch();
   const isMobile = useIsMobile();
   const [activeSection, setActiveSection] = useState("packages");
-  const { packages, loading: packagesLoading, error: packagesError } = useSelector(
-    (state) => state.travelPackages
-  );
-  const { users, loading: usersLoading, error: usersError } = useSelector(
-    (state) => state.user
-  );
-  const { bookings, loading: bookingsLoading, error: bookingsError } = useSelector(
-    (state) => state.bookings
-  );
+  const {
+    packages,
+    loading: packagesLoading,
+    error: packagesError,
+  } = useSelector((state) => state.travelPackages);
+  const { users, loading, error } = useSelector((state) => state.user);
   const { token } = useSelector((state) => state.auth);
- const payload = parseJwt(token)
- 
+  const payload = parseJwt(token);
 
   useEffect(() => {
-      if (token) {
-    dispatch(fetchTravelPackages());
+    if (token) {
+      dispatch(fetchTravelPackages());
       dispatch(fetchUsers());
       dispatch(fetchBookings());
     }
   }, [dispatch, token]);
 
- 
   const handleShowClients = () => {
     setActiveSection("clients");
   };
@@ -53,22 +50,34 @@ const HomePageSupport = () => {
     switch (activeSection) {
       case "clients":
         return (
-      <h2 className="SupportTitle">Lista de Clientes</h2>
+          <>
+            <h2 className="SupportTitle">Lista de Clientes</h2>
+            <UserList
+              clients={users || []}
+              loading={loading}
+              error={error}
+              role={payload?.role}
+            />
+          </>
         );
-      case "bookings":   
+      case "bookings":
         return (
-    <h2 className="SupportTitle">Lista de Reservas</h2>
+          <>
+            <h2 className="SupportTitle">Lista de Reservas</h2>
+            <BookingsAdminTable />
+          </>
         );
       case "packages":
         return (
           <>
-          <h2 className="SupportTitle">Lista de Pacotes</h2>
-          <PackagesList
-            packages={packages}
-            loading={packagesLoading}
-            error={packagesError}
-            role={payload.role}
-          /></>
+            <h2 className="SupportTitle">Lista de Pacotes</h2>
+            <PackagesList
+              packages={packages}
+              loading={packagesLoading}
+              error={packagesError}
+              role={payload.role}
+            />
+          </>
         );
       default:
         return (
@@ -92,7 +101,7 @@ const HomePageSupport = () => {
       style={{
         padding: isMobile ? "0px 0px 30px" : "40px 50px 50px",
       }}
-    >      
+    >
       <Box
         sx={{
           width: "auto",
@@ -102,7 +111,7 @@ const HomePageSupport = () => {
           alignItems: "center",
           mt: isMobile ? 4 : 0,
           ml: isMobile ? "auto" : 0,
-          mr: isMobile ? "auto" : 0,          
+          mr: isMobile ? "auto" : 0,
         }}
       >
         <Button

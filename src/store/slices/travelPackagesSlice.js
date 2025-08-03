@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchTravelPackages, fetchTravelPackageById, createTravelPackage, updateTravelPackageById, deleteTravelPackageById, uploadTravelPackageMedia } from "../actions/travelPackagesActions";
-import { logout } from './authSlice';
 
 const initialState = {
   packages: [],
@@ -110,13 +109,6 @@ const travelPackagesSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      // logout
-      .addCase(logout, (state) => {
-        state.packages = [];
-        state.packageDetails = null;
-        state.error = null;
-        state.loading = false;
-      });
   },
 });
 
