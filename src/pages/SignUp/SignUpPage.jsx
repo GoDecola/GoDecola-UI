@@ -16,6 +16,9 @@ import { CustomTextfield } from "../../components/CustomInputs/CustomTextfield";
 import { useForm } from "../../hooks/useForm";
 import { CustomNumericField } from "../../components/CustomInputs/CustomNumericField";
 import { signup } from "../../services/authService";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -28,16 +31,27 @@ const SignUpPage = () => {
   const handleMouseDownPassword = (event) => event.preventDefault();
   const handleMouseUpPassword = (event) => event.preventDefault();
 
-  const { form, onChangeForm, resetForm } = useForm({
+    const { form, onChangeForm, resetForm, setForm } = useForm({ 
     firstName: "",
     lastName: "",
     phone: "",
     email: "",
     password: "",
+    documentType: "cpf",
     cpf: "",
     rne: "",
     passaport: "",
   });
+
+  const handleDocumentTypeChange = (event) => {
+    const { value } = event.target;
+    setForm((prevForm) => ({
+      ...prevForm,
+      documentType: value,
+      cpf: value === "cpf" ? prevForm.cpf : "",
+      rne: value === "rne" ? prevForm.rne : "",
+    }));
+  };
 
   // onde vai ser a logica de envio do formulário
   const handleSubmit = async (event) => {
@@ -112,6 +126,17 @@ const SignUpPage = () => {
         setLoading(false);
         return;
       }
+      
+      // Validação de RNE (se preenchido)
+      if (form.rne && !/^[A-Za-z0-9]{8,12}$/.test(form.rne)) {
+        setError("RNE inválido. Deve ter entre 8 e 12 caracteres alfanuméricos.");
+        setLoading(false);
+        return;
+      }
+
+      const documentValue = form.documentType === 'cpf'
+        ? form.cpf.replace(/\D/g, "")
+        : form.rne;
 
       // Prepara os dados para envio
       const userData = {
@@ -120,8 +145,7 @@ const SignUpPage = () => {
         phone: form.phone,
         email: form.email,
         password: form.password,
-        cpf: form.cpf || null,
-        rne: form.rne || null,
+        document: documentValue,
         passaport: form.passaport || null,
       };
 
@@ -286,30 +310,64 @@ const SignUpPage = () => {
               required
             />
 
-            <br />
+            {/* Campo CPF */}
+          <br />
             <b className="cpf-passaport-text">
-              Preencha pelo menos um dos campos abaixo: CPF ou RNE
+              Por favor, informe seu CPF ou RNE*
             </b>
 
-            {/* Campo CPF */}
-            <CustomNumericField
-              value={form.cpf}
-              onChange={onChangeForm}
-              name="cpf"
-              label="CPF*"
-              mask="000.000.000-00"
-              maxLength={11}
-              required={!form.passaport} // CPF é obrigatório se Passaporte não for preenchido
-            />
+            <FormControl component="fieldset" sx={{ mt: 1, width: '100%' }}>
+              <RadioGroup
+                row
+                name="documentType"
+                value={form.documentType}
+                onChange={handleDocumentTypeChange}
+              >
+                <FormControlLabel
+                  value="cpf"
+                  control={
+                    <Radio
+                      sx={{
+                        color: "var(--orange-avanade)",
+                        "&.Mui-checked": { color: "var(--orange-avanade)" },
+                      }}
+                    />
+                  }
+                  label="CPF"
+                />
+                <FormControlLabel
+                  value="rne"
+                  control={
+                    <Radio
+                      sx={{
+                        color: "var(--orange-avanade)",
+                        "&.Mui-checked": { color: "var(--orange-avanade)" },
+                      }}
+                    />
+                  }
+                  label="RNE"
+                />
+              </RadioGroup>
 
-            <b style={{ color: "var(--text-footer)" }}>ou</b>
-
-            <CustomTextfield
-              value={form.rne}
-              onChange={onChangeForm}
-              name="rne"
-              label="RNE" // RNE é obrigatório se Passaporte não for preenchido
-            />
+              {form.documentType === "cpf" ? (
+                <CustomNumericField
+                  label="CPF*"
+                  name="cpf"
+                  value={form.cpf}
+                  onChange={onChangeForm}
+                  mask="000.000.000-00"
+                  required
+                />
+              ) : (
+                <CustomTextfield
+                  label="RNE*"
+                  name="rne"
+                  value={form.rne}
+                  onChange={onChangeForm}
+                  required
+                />
+              )}
+            </FormControl>
 
             {/* Campo Passaporte */}
             <CustomTextfield
