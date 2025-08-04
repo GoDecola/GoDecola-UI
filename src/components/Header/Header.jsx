@@ -22,7 +22,7 @@ export const Header = () => {
   const { user, loading } = useSelector((state) => state.user);
   const { token } = useSelector((state) => state.auth);
   const payload = token ? parseJwt(token) : null;
-
+  
   useEffect(() => {
     if (token && !user && !loading) {
       dispatch(fetchCurrentUser());

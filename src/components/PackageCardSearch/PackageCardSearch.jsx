@@ -1,4 +1,3 @@
-import "./PackageCard.css";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
@@ -12,7 +11,7 @@ import { goToPackageDetails } from "../../routes/coordinator";
 import imageUnavailable from "../../assets/imageUnavailable.jpg";
 import { baseURLMedias } from "../../utils/baseURL";
 
-export const PackageCard = ({
+export const PackageCardSearch= ({
   id,
   title,
   price,
@@ -20,6 +19,8 @@ export const PackageCard = ({
   imageSrc,
   isCurrentlyOnPromotion,
   discountPercentage,
+  startDate,
+  endDate,
 }) => {
   const [isFavorited, setIsFavorited] = useState(false);
   const navigate = useNavigate();
@@ -74,14 +75,21 @@ export const PackageCard = ({
             width: "100%",
           }}
         >
-          <Typography
-            gutterBottom
+          <Typography            
             variant="h6"
             component="div"
-            sx={{ color: "var(--primary-text-color)", mt: "-10px",lineHeight: 1.1, }}
+            sx={{ color: "var(--primary-text-color)", mt: "-10px", lineHeight: 1, }}
           >
             {title}
           </Typography>
+          <Typography            
+            variant="body2"
+            component="div"
+            sx={{ color: "var(--primary-text-color)", mt: "5px" }}
+          >
+           Disponível de {startDate} à {endDate}
+          </Typography>
+
         </Box>
         <div className="package-info">
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

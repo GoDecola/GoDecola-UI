@@ -1,10 +1,11 @@
 import TextField from "@mui/material/TextField";
 
-export const CustomTextfield = ({
+export const CustomTextfield_Disable_NOTRequired = ({
   label,
   name,
   value,
   onChange,
+  disabled = false,
 }) => {
   return (
     <TextField
@@ -13,11 +14,18 @@ export const CustomTextfield = ({
       variant="standard"
       value={value}
       onChange={onChange}
-      required
+      disabled={disabled}
       sx={{
         width: "100%",
         input: {
           color: "var(--text-footer)",
+        },
+        "& .MuiInputBase-input": {
+          textTransform: "uppercase",
+        },
+        "& .MuiInputBase-input.Mui-disabled": {
+          color: "var(--no-active-tab)",
+          WebkitTextFillColor: "var(--no-active-tab)",
         },
         "&:hover input": {
           color: "var(--icons-login-color)",

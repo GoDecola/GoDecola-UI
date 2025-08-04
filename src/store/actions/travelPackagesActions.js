@@ -17,13 +17,13 @@ const transformPackageData = (packageData) => {
     const transformSinglePackage = (pkg) => {
         const formattedPrice = (parseFloat(pkg.price) / 100).toFixed(2);
         const isCurrentlyOnPromotion = pkg.isCurrentlyOnPromotion ?? (pkg.promotionStartDate && pkg.promotionEndDate ? true : false);
-        console.log("transformSinglePackage:", {
+/*         console.log("transformSinglePackage:", {
             id: pkg.id,
             promotionStartDate: pkg.promotionStartDate,
             promotionEndDate: pkg.promotionEndDate,
             isCurrentlyOnPromotion,
             apiIsCurrentlyOnPromotion: pkg.isCurrentlyOnPromotion,
-        });
+        }); */
 
         return {
             ...pkg,
@@ -53,6 +53,21 @@ export const fetchTravelPackages = createAsyncThunk(
       return transformPackageData(response);
     } catch (error) {
       console.error('Erro ao buscar pacotes:', error.response?.data || error.message);
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+export const fetchTravelPackagesByFilter = createAsyncThunk(
+  'travelPackages/fetchTravelPackagesByFilter',
+  async (filters, { rejectWithValue }) => {
+    try {
+      console.log('Filtros enviados para o serviço:', filters);
+      const response = await travelPackageService.travelPackagesFilter(filters);
+      console.log('Resposta do serviço:', response);
+      return transformPackageData(response);
+    } catch (error) {
+      console.error('Erro ao buscar pacotes filtrados:', error.response?.data || error.message);
       return rejectWithValue(error.response?.data || error.message);
     }
   }
