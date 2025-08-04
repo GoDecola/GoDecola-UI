@@ -10,12 +10,12 @@ export const goToLogin = (navigate) => {
   navigate("/login");
 };
 
-export const goToRecPassMail = (navigate) => {
-  navigate("/recpassmail");
+export const goToForgotPassword = (navigate) => {
+  navigate("/forgot-password");
 };
 
-export const goToRecoveryPassword = (navigate) => {
-  navigate("/recoverypassword");
+export const goToResetPassword = (navigate) => {
+  navigate("/reset-password");
 };
 
 export const goToSignUp = (navigate) => {

@@ -3,7 +3,7 @@ import logo from "../../assets/go_decola_logo_01.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  goToRecPassMail,
+  goToForgotPassword,
   goToSignUp,
   goToHome,
   goToHomeAdmin,
@@ -211,7 +211,7 @@ export default function LoginPage() {
             </FormControl>
           </Box>
 
-          <div onClick={() => goToRecPassMail(navigate)} className="forgot">
+          <div onClick={() => goToForgotPassword(navigate)} className="forgot">
             Esqueci minha senha
           </div>
 
