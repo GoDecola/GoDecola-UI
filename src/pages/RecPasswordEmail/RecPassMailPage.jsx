@@ -5,8 +5,43 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Input from '@mui/material/Input';
+import { baseURL } from '../../utils/baseURL';
+import { useState } from 'react';
 
 export default function RecPassMailPage() {
+
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    setMessage('');
+    setError('');
+
+    try {
+      const response = await fetch(`${baseURL}/auth/forgot-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: email })
+      });
+
+      if (response.ok) {
+        setMessage('Enviamos um link para redefinição da sua senha.');
+      } else {
+        setError('Ocorreu um erro, tente novamente.')
+      }
+    } catch (err) {
+      setError('Não foi possível conectar ao servidor. Verifique sua conexão');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="Logincontainer">
 
@@ -26,7 +61,7 @@ export default function RecPassMailPage() {
       {/* lado direito da tela */}
       <div className="right">
         <h2>RECUPERE SUA SENHA</h2>
-        <form>
+        <form onSubmit={handleSubmit}>
 
           <p className='text-color-edit'>Para que você redefina sua senha, é necessário preencher o campo abaixo.</p>
           
@@ -34,12 +69,21 @@ export default function RecPassMailPage() {
             <AccountCircle sx={{ color: 'black', mr: 1, my: 0.5 }} />
             <FormControl sx={{ width: '100%' }} variant="standard">
               <InputLabel htmlFor="input-email">Digite seu e-mail cadastrado</InputLabel>
-              <Input id="input-email" type="email" />
+              <Input 
+                id="input-email" 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </FormControl>
           </Box>
 
-          <button type="submit" className="login-btn">
-            ENVIAR
+          {message && <p className="success-message">{message}</p>}
+          {error && <p className="error-message">{error}</p>}
+
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? 'ENVIANDO...' : 'ENVIAR'}
           </button>
           
         </form>
