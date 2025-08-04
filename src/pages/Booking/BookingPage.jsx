@@ -769,8 +769,8 @@ const BookingPage = () => {
               borderRadius: "15px",
               fontSize: { xs: "1rem", sm: "1.2rem", md: "1.4rem" },
               fontWeight: "bold",
-              py: { xs: 0, sm: 1 },
-              px: { xs: 0, sm: 3, md: 4 },
+              py: { xs: 0.5, sm: 1 },
+              px: { xs: 2, sm: 3, md: 4 },
               fontFamily:
                 '"Segoe UI", OpenSans, Roboto, Arial, Tahoma, Helvetica, sans-serif',
               "&:hover": {
