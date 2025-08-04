@@ -13,8 +13,6 @@ import { colors } from '@mui/joy';
 import { baseURL } from '../../utils/baseURL';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-const API_URL = 'https://localhost:7109/api'
-
 export default function RecoveryPasswordPage() {
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -56,7 +54,7 @@ export default function RecoveryPasswordPage() {
     setError('');
 
     try {
-      const response = await fetch(`${API_URL}/auth/reset-password`, {
+      const response = await fetch(`${baseURL}/auth/reset-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
