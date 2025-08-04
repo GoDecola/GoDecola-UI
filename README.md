@@ -54,7 +54,7 @@ npm run dev
         <img src="https://github.com/gustavobarbosa7.png" width="100px">
         <br>
         <sub>
-          <b>Gabriel</b>
+          <b>Gustavo</b>
         </sub>
       </a>
     </td>
