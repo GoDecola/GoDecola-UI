@@ -5,10 +5,15 @@ A interface consome os dados da GoDecola API e proporciona uma experiência comp
 
 ## Sumário
 
+- [Preview](#preview)
 - [Tecnologias Utilizadas](#tecnologias-utilizadas)
 - [Instruções de Uso](#instruções-de-uso)
 - [Contribuidores](#contribuidores)
 - [Licença](#licença)
+
+## 💻 Preview
+# TODO: colocar em uma pasta docs/, na raiz, uma imagem geral do site GoDecola e alterar a path  
+![Screenshot da Home](docs/screenshot-home.png)
 
 ## Tecnologias Utilizadas
 - React
@@ -49,7 +54,7 @@ npm run dev
         <img src="https://github.com/gustavobarbosa7.png" width="100px">
         <br>
         <sub>
-          <b>Evelyn</b>
+          <b>Gabriel</b>
         </sub>
       </a>
     </td>
@@ -58,7 +63,7 @@ npm run dev
         <img src="https://github.com/lavih2048.png" width="100px">
         <br>
         <sub>
-          <b>Gabriel</b>
+          <b>Lavínia</b>
         </sub>
       </a>
     </td>
@@ -67,7 +72,7 @@ npm run dev
         <img src="https://github.com/RinoaYK.png" width="100px">
         <br>
         <sub>
-          <b>Letícia</b>
+          <b>Lidia</b>
         </sub>
       </a>
     </td>
@@ -77,4 +82,4 @@ npm run dev
 ## Licença
 Este projeto está licenciado sob a [Licença MIT](LICENSE).
 
-#TOD: Adicionar uma Licença MIT na raiz do projeto
+# TODO: Adicionar uma Licença MIT na raiz do projeto
