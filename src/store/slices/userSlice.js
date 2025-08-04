@@ -81,7 +81,15 @@ const userSlice = createSlice({
       })
       .addCase(createUser.fulfilled, (state, action) => {
         state.loading = false;
-        // Lista atualizada por fetchUsers
+        if (state.user && action.payload.id === state.user.id) {
+          state.user = {
+            ...state.user,
+            ...action.payload,
+          };
+        }
+        state.users = state.users.map((u) =>
+          u.id === action.payload.id ? { ...u, ...action.payload } : u
+        );
       })
       .addCase(createUser.rejected, (state, action) => {
         state.loading = false;
@@ -94,7 +102,13 @@ const userSlice = createSlice({
       })
       .addCase(updateUserById.fulfilled, (state, action) => {
         state.loading = false;
-        // Lista atualizada por fetchUsers
+
+        if (action.payload?.id && state.user?.id === action.payload.id) {
+          state.user = {
+            ...state.user,
+            ...action.payload,
+          };
+        }
       })
       .addCase(updateUserById.rejected, (state, action) => {
         state.loading = false;

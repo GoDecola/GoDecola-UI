@@ -47,6 +47,7 @@ export const CustomNumericField = ({
   onChange,
   mask,
   required = true,
+  disabled = false,
 }) => {
   return (
     <TextField
@@ -56,6 +57,7 @@ export const CustomNumericField = ({
       onChange={onChange}
       variant="standard"
       required={required}
+      disabled={disabled}
       slotProps={{
         input: {
           inputComponent: MaskedInput,
@@ -70,6 +72,10 @@ export const CustomNumericField = ({
       sx={{
         width: "100%",
         input: { color: "var(--text-footer)" },
+        "& .MuiInputBase-input.Mui-disabled": {
+          color: "var(--no-active-tab)",
+          WebkitTextFillColor: "var(--no-active-tab)",
+        },
         "&:hover input": { color: "var(--icons-login-color)" },
         "&:hover .MuiInputLabel-root": { color: "var(--icons-login-color)" },
         "& .MuiInputLabel-root": { color: "var(--icons-login-color)" },

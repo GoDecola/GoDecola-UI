@@ -3,6 +3,7 @@
   padding: 0;
   box-sizing: border-box;
   font-family: "Segoe UI", OpenSans, Roboto, Arial, Tahoma, Helvetica, sans-serif;
+  
 }
 
 :root {
@@ -56,3 +57,7 @@
   padding: 8px 12px !important;
   border-radius: 4px !important;
 }
+
+.MuiFormLabel-asterisk { 
+    display: none;
+} 

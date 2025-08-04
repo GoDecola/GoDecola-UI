@@ -1,17 +1,30 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { fetchTravelPackages, fetchTravelPackageById, createTravelPackage, updateTravelPackageById, deleteTravelPackageById, uploadTravelPackageMedia } from "../actions/travelPackagesActions";
+import { createSlice } from '@reduxjs/toolkit';
+import {
+  fetchTravelPackages,
+  fetchTravelPackagesByFilter,
+  fetchTravelPackageById,
+  createTravelPackage,
+  updateTravelPackageById,
+  deleteTravelPackageById,
+  uploadTravelPackageMedia
+} from '../actions/travelPackagesActions';
 
 const initialState = {
   packages: [],
-  packageDetails: null,
+  filteredPackages: [],
+  currentPackage: null,
   loading: false,
   error: null,
 };
 
 const travelPackagesSlice = createSlice({
-  name: "travelPackages",
+  name: 'travelPackages',
   initialState,
-  reducers: {},
+  reducers: {
+    clearFilteredPackages(state) {
+      state.filteredPackages = [];
+    },
+  },
   extraReducers: (builder) => {
     builder
       // fetchTravelPackages
@@ -27,6 +40,21 @@ const travelPackagesSlice = createSlice({
       .addCase(fetchTravelPackages.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      // fetchTravelPackagesByFilter      
+      .addCase(fetchTravelPackagesByFilter.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.filteredPackages = [];
+      })
+      .addCase(fetchTravelPackagesByFilter.fulfilled, (state, action) => {
+        state.loading = false;
+        state.filteredPackages = action.payload || [];
+      })
+      .addCase(fetchTravelPackagesByFilter.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Erro ao buscar pacotes filtrados';
+        state.filteredPackages = []; 
       })
       // fetchTravelPackageById
       .addCase(fetchTravelPackageById.pending, (state) => {

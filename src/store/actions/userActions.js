@@ -102,13 +102,18 @@ export const updateUserById = createAsyncThunk(
   async ({ id, userData }, { getState, rejectWithValue, dispatch }) => {
     try {
       const { auth } = getState();
+      if (!auth.token) {
+        throw new Error('No authentication token found');
+      }
       const response = await userService.updateUserById(id, userData, auth.token);
       console.log('Usuário atualizado:', response);
-      dispatch(fetchUsers());
-      return response;
+
+      await dispatch(fetchCurrentUser());
+
+      return response.data;
     } catch (error) {
       console.error('Erro ao atualizar usuário:', error.response?.data || error.message);
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );

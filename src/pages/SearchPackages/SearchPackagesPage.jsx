@@ -1,286 +1,307 @@
-import "./SearchPackagesPage.css";
-import packagesData from "../../travels.mock.json";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
-  TextField,
   Button,
-  InputAdornment,
   Typography,
+  Snackbar,
+  Alert,
+  InputAdornment,
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import { useForm } from "../../hooks/useForm";
+import { CustomTextfield } from "../../components/CustomInputs/CustomTextfield";
+import { CustomNumericField } from "../../components/CustomInputs/CustomNumericField";
+import { CustomDateField } from "../../components/CustomInputs/CustomDateField";
 import { CustomPriceField } from "../../components/CustomInputs/CustomPriceField";
-import { CustomLogicDate } from "../../components/CustomInputs/CustomLogicDate";
-// import axios from "axios";
-import { PackageCard } from "../../components/PackageCard/PackageCard";
-//import { Link } from "react-router-dom";
+import { PackageCardSearch } from "../../components/PackageCardSearch/PackageCardSearch";
+import useIsMobile from "../../hooks/useIsMobile";
+import { fetchTravelPackagesByFilter } from "../../store/actions/travelPackagesActions";
+import { formatDate } from "../../utils/formatDate";
 
-export default function SearchPackagesPage() {
+const SearchPackagesPage = () => {
+  const dispatch = useDispatch();
+  const isMobile = useIsMobile();
+  const {
+    loading,
+    error: reduxError,
+    filteredPackages = [],
+  } = useSelector((state) => state.travelPackages);
+  const [formError, setFormError] = useState(null);
+  
+  
+
   const today = new Date().toISOString().slice(0, 10);
-  const { form, onChangeForm } = useForm({
-    Price: "",
-    InicialDate: "",
-    FinalDate: "",
-  });
-  const [destination, setDestination] = useState("");
-  const [date] = useState(null);
-  const [adults, setAdults] = useState(1);
-  const [budget] = useState("");
-  const [resultados, setResultados] = useState([]);
-  const [buscaRealizada, setBuscaRealizada] = useState(false);
+const initialState = {
+  destination: "",
+  minPrice: "",
+  maxPrice: "",
+  startDate: "",
+  endDate: "",
+  numberGuests: "1",
+};
 
-  const handleSearch = async () => {
+  const { form, onChangeForm, resetForm } = useForm(initialState);
+
+  const handleSearch = useCallback(async () => {
+    setFormError(null);
+
+    // Validation
+    const numberGuests = form.numberGuests
+      ? parseInt(form.numberGuests, 10)
+      : null;
+
+const minPrice = form.minPrice !== "" ? parseFloat(form.minPrice) : null;
+const maxPrice = form.maxPrice !== "" ? parseFloat(form.maxPrice) : null;
+
+if ((minPrice !== null && isNaN(minPrice)) || (maxPrice !== null && isNaN(maxPrice))) {
+  setFormError("Preços mínimo e máximo devem ser valores válidos");
+  return;
+}
+
+if (minPrice !== null && maxPrice !== null && minPrice > maxPrice) {
+  setFormError("Preço mínimo não pode ser maior que o preço máximo");
+  return;
+}
+    if (numberGuests !== null && (isNaN(numberGuests) || numberGuests < 1)) {
+      setFormError("Número de hóspedes deve ser pelo menos 1");
+      return;
+    }
+
     try {
-      // Passo 1: busca todos os pacotes
-      const todosPacotes = packagesData;
+      const filters = {
+        destination: form.destination || undefined,
+  minPrice: minPrice !== null ? Math.floor(minPrice * 100) : undefined,
+  maxPrice: maxPrice !== null ? Math.floor(maxPrice * 100) : undefined,
+        startDate: form.startDate || undefined,
+        endDate: form.endDate || undefined,
+        numberGuests: numberGuests || undefined,
+      };
 
-      // const response = await axios.get(
-      //   "http://localhost:5071/api/travel-packages"
-      // );
-      //busca filtro pela API
-      // const todosPacotes = response.data;
-
-      // console.log("Pacotes recebidos da API:", todosPacotes);
-
-      // Passo 2: aplica os filtros no frontend
-      const pacotesFiltrados = todosPacotes.filter((pacote) => {
-        //teste
-        console.log("→ destino:", destination, "vs", pacote.destination);
-        console.log("→ adultos:", adults, "vs", pacote.numberGuests);
-
-        const normalize = (str) =>
-          str
-            ?.normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .toLowerCase();
-
-        const destinoMatch =
-          !destination ||
-          (pacote.destination &&
-            pacote.destination
-              .toLowerCase()
-              .includes(destination.toLowerCase()));
-
-        const dataInicialMatch =
-          form.InicialDate === "" ||
-          (pacote.startDate &&
-            new Date(pacote.startDate) >= new Date(form.InicialDate));
-
-        const dataFinalMatch =
-          form.FinalDate === "" ||
-          (pacote.endDate &&
-            new Date(pacote.endDate) <= new Date(form.FinalDate));
-
-        const precoMaximoMatch =
-          form.Price === "" ||
-          (pacote.price &&
-            pacote.price <=
-              parseFloat(
-                form.Price.replace("R$", "")
-                  .replace(/\./g, "")
-                  .replace(",", ".")
-              ));
-
-        const adultosMatch =
-          adults === undefined ||
-          !pacote.numberGuests ||
-          pacote.numberGuests >= adults;
-
-        return (
-          destinoMatch &&
-          dataInicialMatch &&
-          dataFinalMatch &&
-          precoMaximoMatch &&
-          adultosMatch
-        );
+      // Construir os parâmetros da query
+      const params = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) {
+          params.append(key, value);
+        }
       });
 
-      setBuscaRealizada(true);
-      setResultados(pacotesFiltrados);
+       const path = `/travel-packages/filter?${params.toString()}`;
+      console.log("Requisição GET para o path:", path);
+      console.log("Search filters:", filters);
 
-      setResultados(pacotesFiltrados);
-      console.log("Pacotes filtrados:", pacotesFiltrados);
+      const result = await dispatch(
+        fetchTravelPackagesByFilter(filters)
+      ).unwrap();
+      console.log("Filtered packages received:", result); 
+      await dispatch(fetchTravelPackagesByFilter(filters)).unwrap();
     } catch (error) {
+      setFormError(reduxError || error.message || "Erro ao buscar pacotes");
       console.error("Erro ao buscar pacotes:", error);
     }
-  };
-
-  //   const handleSearch = async () => {
-  //     console.log("Filtros selecionados:", {
-  //       destino: destination,
-  //       data: date,
-  //       adultos: adults,
-  //       crianças: children,
-  //       valor: budget,
-  //     });
-
-  //   const response = await axios.get("http://localhost:5071/api/travel-packages"),
-
-  //   setResultados(response.data);
-  //     console.log("Pacotes encontrados:", response.data);
-  //     catch (error) {
-  //     console.error("Erro ao buscar pacotes:", error);
-  //   }
-  // };
+  }, [dispatch, form, reduxError]);
 
   return (
-    <div className="container-search">
-      <Box className="search-container">
-        <Typography variant="h6" sx={{ mb: 2 }} className="title-packcage">
-          Para onde?
+    <Box   sx={{
+    padding: '2rem',
+    paddingBottom: '50px',
+    width: '100%',
+    height: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'var(--background-color)',
+  }}>
+
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        p: 2,
+        width: "100%",
+        maxWidth: "1310px",
+        margin: "0 auto",
+        backgroundColor: "var(--background-color)",
+      }}
+    >
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <Typography
+          variant="h6"
+          sx={{ mb: 2, color: "var(--primary-text-color)" }}
+        >
+          Buscar Pacotes
         </Typography>
 
-        <TextField
-          label="Buscar destino"
-          value={destination}
-          onChange={(e) => setDestination(e.target.value)}
-          variant="outlined"
-          fullWidth
+        <CustomTextfield
+          label="Destino"
+          name="destination"
+          value={form.destination}
+          onChange={onChangeForm}
           InputProps={{
-            style: {
-              color: "var(--primary-text-color)", // cor do texto digitado
-            },
             startAdornment: (
               <InputAdornment position="start">
                 <Search sx={{ color: "var(--primary-text-color)" }} />
               </InputAdornment>
             ),
           }}
-          InputLabelProps={{
-            sx: {
-              color: "var(--primary-text-color)",
-              "&.Mui-focused": {
-                color: "var(--orange-avanade)",
-              },
-            },
-          }}
-          sx={{
-            backgroundColor: "var(--background-color)",
-            borderRadius: "8px",
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "8px",
-              "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "var(--primary-text-color)",
-              },
-              "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "var(--orange-avanade)",
-              },
-              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "var(--orange-avanade)",
-              },
-            },
-          }}
-        />
-
-        <CustomLogicDate
-          label="Data de início"
-          name="InicialDate"
-          value={form.InicialDate}
-          onChange={onChangeForm}
-          minDate={today}
-        />
-
-        <CustomLogicDate
-          label="Data final"
-          name="FinalDate"
-          value={form.FinalDate}
-          onChange={onChangeForm}
-          minDate={form.InicialDate || today}
         />
 
         <Box
-          className="search-input people-selector"
           sx={{
-            alignItems: "center",
-            padding: "12px 16px",
-            border: "1px solid var(--primary-text-color)",
-            borderRadius: "8px",
-            backgroundColor: "transparent",
-            transition: "border-color 0.3s, box-shadow 0.3s",
-
-            "&:hover": {
-              borderColor: "var(--orange-avanade)",
-            },
-            "&:focus-within": {
-              borderColor: "var(--orange-avanade)",
-              boxShadow: "0 0 0 1px var(--orange-avanade)",
-            },
+            display: "flex",
+            gap: 2,
+            width: "100%",
+            flexDirection: isMobile ? "column" : "row",
           }}
         >
-          <Typography sx={{ color: "var(--primary-text-color)" }}>
-            Quantidade:
-          </Typography>
+          <CustomDateField
+            label="Data de Início"
+            name="startDate"
+            value={form.startDate}
+            onChange={onChangeForm}
+            min={today}
+          />
+          <CustomDateField
+            label="Data de Término"
+            name="endDate"
+            value={form.endDate}
+            onChange={onChangeForm}
+            min={form.startDate || today}
+          />
+          <CustomNumericField
+            label="Nº de Hóspedes"
+            name="numberGuests"
+            value={form.numberGuests}
+            onChange={onChangeForm}
+            mask="0000"
+          />
+        </Box>
 
-          <Box className="people-group">
-            <span className="texts">Hóspedes</span>
-            <div>
-              <button
-                onClick={() => setAdults(adults - 1)}
-                disabled={adults <= 1}
-                className="icon-value"
-              >
-                {" "}
-                -{" "}
-              </button>
-              <span className="texts">{adults}</span>
-              <button
-                onClick={() => setAdults(adults + 1)}
-                className="icon-value"
-              >
-                {" "}
-                +{" "}
-              </button>
-            </div>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            width: "100%",
+            mt: 2,
+          }}
+        >
+          <Typography variant="subtitle1" sx={{ color: "var(--text-footer)" }}>
+            Faixa de Preço
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              flexDirection: isMobile ? "column" : "row",
+            }}
+          >
+            <CustomPriceField
+              label="Preço Mínimo (R$)"
+              name="minPrice"
+              value={form.minPrice}
+              onChange={onChangeForm}
+              mask={{
+                prefix: "R$ ",
+                thousandSeparator: ",",
+                decimalSeparator: ".",
+                decimalScale: 2,
+                fixedDecimalScale: true,
+              }}
+              max={form.maxPrice}
+            />
+            <CustomPriceField
+              label="Preço Máximo (R$)"
+              name="maxPrice"
+              value={form.maxPrice}
+              onChange={onChangeForm}
+              mask={{
+                prefix: "R$ ",
+                thousandSeparator: ",",
+                decimalSeparator: ".",
+                decimalScale: 2,
+                fixedDecimalScale: true,
+              }}
+              min={form.minPrice}
+            />
           </Box>
         </Box>
 
-        <CustomPriceField
-          label="Preço"
-          name="Price"
-          value={form.Price}
-          onChange={onChangeForm}
-          mask={{
-            prefix: "R$ ",
-            thousandSeparator: ",",
-            decimalSeparator: ".",
-            decimalScale: 2,
-            fixedDecimalScale: true,
-          }}
-        />
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={handleSearch}
+            disabled={loading}
+            sx={{ backgroundColor: "var(--orange-avanade)", color: "white" }}
+          >
+            Buscar
+          </Button>
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={() => resetForm()}
+            sx={{
+              borderColor: "var(--orange-avanade)",
+              color: "var(--orange-avanade)",
+            }}
+          >
+            Limpar
+          </Button>
+        </Box>
 
-        <Button
-          variant="contained"
-          fullWidth
-          onClick={handleSearch}
-          className="search-button"
-        >
-          Buscar
-        </Button>
-
-        {buscaRealizada && resultados.length === 0 && (
-          <Typography sx={{ mt: 2, color: "gray", textAlign: "center" }}>
+        {filteredPackages.length === 0 && !loading && (
+          <Typography
+            sx={{ mt: 2, color: "var(--text-footer)", textAlign: "center" }}
+          >
             Nenhuma reserva encontrada com os filtros selecionados.
           </Typography>
         )}
 
-        {resultados.length > 0 && (
+        {filteredPackages.length > 0 && (
           <Box
-            className="resultados-box-edit"
+            sx={{
+              display: "flex",
+              gap: {xs:5, md: 3},
+              flexWrap: "wrap",
+              width: "100%",
+              justifyContent: "center",
+              flexDirection: "row",
+            }}
           >
-            {resultados.map((pacote) => (
-              <PackageCard
-                key={pacote.id}
-                id={pacote.id}
-                title={pacote.title}
-                price={pacote.price}
-                rating={pacote.rating}
-                imageSrc={pacote.mediasUrl}
-              />
+            {filteredPackages.map((pacote) => (
+              <Box key={pacote.id}>
+                <PackageCardSearch
+                  id={pacote.id}
+                  title={pacote.title}
+                  price={pacote.price}
+                  rating={pacote.rating}
+                  imageSrc={pacote.mediasUrl}
+                  isCurrentlyOnPromotion={pacote.isCurrentlyOnPromotion}
+                  discountPercentage={pacote.discountPercentage}
+                  startDate={formatDate(pacote.startDate)}
+                  endDate={formatDate(pacote.endDate)}
+                />
+              </Box>
             ))}
           </Box>
         )}
+
+        <Snackbar
+          open={!!formError}
+          autoHideDuration={6000}
+          onClose={() => setFormError(null)}
+        >
+          <Alert severity="error" onClose={() => setFormError(null)}>
+            {formError || reduxError}
+          </Alert>
+        </Snackbar>
       </Box>
-    </div>
+    </Box>
+    </Box>
   );
-}
+};
+
+export default SearchPackagesPage;

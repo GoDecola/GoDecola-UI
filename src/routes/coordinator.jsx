@@ -62,8 +62,8 @@ export const goToHomeSupport = (navigate) => {
   navigate("/home-support");
 };
 
-export const goToCheckout = (navigate) => {
-  navigate("/checkout");
+export const goToCheckout = (navigate, reservationId) => {
+  navigate('/checkout', { state: { reservationId } });
 };
 
 export const goToPaymentSuccess = (navigate, paymentId) => {

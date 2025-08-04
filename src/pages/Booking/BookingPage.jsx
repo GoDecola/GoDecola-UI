@@ -47,6 +47,7 @@ const BookingPage = () => {
   const [formError, setFormError] = useState(null);
   const [openSuccessModal, setOpenSuccessModal] = useState(false);
   const [includeUser, setIncludeUser] = useState(true);
+  const [reservationId, setReservationId] = useState(null);
 
   const isValidCpf = (document) => {
     return document && /^\d{11}$/.test(document);
@@ -90,15 +91,15 @@ const BookingPage = () => {
   }, [packageData, navigate]);
 
   useEffect(() => {
-    if (openSuccessModal) {
+    if (openSuccessModal && reservationId) {
       const timer = setTimeout(() => {
         setOpenSuccessModal(false);
         setFormError(null);
-        goToCheckout(navigate);
+        goToCheckout(navigate, reservationId);
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [openSuccessModal, navigate]);
+  }, [openSuccessModal, reservationId, navigate]);
 
   useEffect(() => {
     setForm((prev) => ({
@@ -274,6 +275,7 @@ const BookingPage = () => {
       console.log("Submitting booking:", payload);
       const response = await dispatch(createBooking(payload)).unwrap();
       console.log("Booking response:", response);
+      setReservationId(response.id);
       setFormError("Redirecionando para o pagamento.");
       setOpenSuccessModal(true);
     } catch (err) {
@@ -285,9 +287,10 @@ const BookingPage = () => {
   const handleCloseSuccessModal = () => {
     setOpenSuccessModal(false);
     setFormError(null);
-    goToCheckout(navigate);
+    if (reservationId) {
+      goToCheckout(navigate, reservationId);
+    }
   };
-
   return (
     <Box
       sx={{
