@@ -55,14 +55,7 @@ const bookingSlice = createSlice({
       .addCase(createBooking.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Erro ao criar reserva';
-      })
-      // Logout
-      .addCase(logout, (state) => {
-        state.bookings = [];
-        state.bookingDetails = null;
-        state.error = null;
-        state.loading = false;
-      });
+      }) 
   },
 });
 

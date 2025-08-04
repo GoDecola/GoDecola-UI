@@ -1,49 +1,59 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkout } from '../../store/actions/paymentActions';
+import { clearError, clearCheckoutResult } from '../../store/slices/paymentSlice';
+import { goToPaymentSuccess } from '../../routes/coordinator';
 
 const CheckoutPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const reservationId = location.state?.reservationId;
   const [paymentMethod, setPaymentMethod] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
-  // Verifica se o ID da reserva está presente
-  if (!reservationId) {
-    return <div>Erro: ID da reserva não encontrado.</div>;
-  }
+  // Estados do Redux
+  const { checkoutResult, loading, error } = useSelector((state) => state.payments);
+
+  // Limpar erro ao montar o componente e resultado ao desmontar
+  useEffect(() => {
+    dispatch(clearError());
+    return () => {
+      dispatch(clearCheckoutResult());
+    };
+  }, [dispatch]);
+
+  // Redirecionar após checkout
+  useEffect(() => {
+    if (checkoutResult) {
+      console.log('Pagamento processado:', checkoutResult);
+      const { redirectUrl, status, reservationId: resultReservationId } = checkoutResult;
+
+      if (redirectUrl && status === 'PENDING') {
+        // Redirecionar para o Stripe checkout
+        window.location.href = redirectUrl;
+      } else if (resultReservationId) {
+        // Usar reservationId para navegar para a página de sucesso
+        goToPaymentSuccess(navigate, resultReservationId);
+      } else {
+        console.error('reservationId não encontrado em checkoutResult:', checkoutResult);
+        navigate('/error', { state: { message: 'ID da reserva não encontrado no resultado do pagamento' } });
+      }
+    }
+  }, [checkoutResult, navigate]);
 
   // Função para processar o pagamento
   const handlePayment = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch('http://localhost:5071/api/payment/checkout', {
-       method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          reservationId,
-          method: paymentMethod,
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Pagamento processado:', data);
-        
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Erro no pagamento');
-      }
-    } catch (error) {
-      setError('Erro na requisição: ' + error.message);
-    } finally {
-      setLoading(false);
-    }
+    const methodInfo = {
+      reservationId,
+      method: paymentMethod,
+    };
+    await dispatch(checkout(methodInfo));
   };
+
+  if (!reservationId) {
+    return <div>Erro: ID da reserva não encontrado.</div>;
+  }
 
   return (
     <div>
@@ -64,7 +74,7 @@ const CheckoutPage = () => {
       <button onClick={handlePayment} disabled={!paymentMethod || loading}>
         {loading ? 'Processando...' : 'Confirmar Pagamento'}
       </button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: 'red' }}>{error.message || error}</p>}
     </div>
   );
 };

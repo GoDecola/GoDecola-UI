@@ -3,14 +3,14 @@ import authReducer from './slices/authSlice';
 import userReducer from './slices/userSlice';
 import travelPackagesReducer from './slices/travelPackagesSlice';
 import bookingReducer from './slices/bookingSlice';
-
+import paymentReducer from './slices/paymentSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
   travelPackages: travelPackagesReducer,
   bookings: bookingReducer,
-
+  payments: paymentReducer,
 });
 
 const loadToken = () => {
@@ -38,6 +38,13 @@ const preloadedState = {
   travelPackages: {
     packages: [],
     packageDetails: null,
+    loading: false,
+    error: null,
+  },
+  payments: {
+    payments: [],
+    paymentDetails: null,
+    checkoutResult: null,
     loading: false,
     error: null,
   },

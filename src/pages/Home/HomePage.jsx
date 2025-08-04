@@ -12,7 +12,6 @@ import useShuffledArray from "../../hooks/useShuffledArray";
 import useIsMobile from "../../hooks/useIsMobile";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { fetchTravelPackages } from "../../store/actions/travelPackagesActions";
-import axios from "axios";
 
 const HomePage = () => {
   const dispatch = useDispatch();
