@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { goToPackageDetails } from "../../routes/coordinator";
 import imageUnavailable from "../../assets/imageUnavailable.jpg";
 import { baseURLMedias } from "../../utils/baseURL";
+import useIsOnRoute from "../../hooks/useIsOnRoute";
 
 export const PackageCard = ({
   id,
@@ -23,6 +24,7 @@ export const PackageCard = ({
 }) => {
   const [isFavorited, setIsFavorited] = useState(false);
   const navigate = useNavigate();
+  const isOnPackageDetailsPage = useIsOnRoute(["/history"]);
 
   const toggleFavorite = () => {
     setIsFavorited(!isFavorited);
@@ -35,7 +37,7 @@ export const PackageCard = ({
     Array.isArray(imageSrc) && imageSrc.length > 0 && imageSrc[0].filePath
       ? `${baseURLMedias}${imageSrc[0].filePath}`
       : imageUnavailable;
-
+  
   return (
     <Card
       sx={{
@@ -43,7 +45,9 @@ export const PackageCard = ({
         height: 260,
         borderRadius: "16px",
         position: "relative",
-        backgroundColor: "var(--footer-bg)",
+        backgroundColor: isOnPackageDetailsPage
+          ? "var(--background-color)"
+          : "var(--footer-bg)",
       }}
       className="packageCard"
       onClick={() => goToPackageDetails(navigate, id)}
@@ -78,7 +82,11 @@ export const PackageCard = ({
             gutterBottom
             variant="h6"
             component="div"
-            sx={{ color: "var(--primary-text-color)", mt: "-10px",lineHeight: 1.1, }}
+            sx={{
+              color: "var(--primary-text-color)",
+              mt: "-10px",
+              lineHeight: 1.2,
+            }}
           >
             {title}
           </Typography>
