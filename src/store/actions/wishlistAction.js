@@ -10,8 +10,8 @@ export const fetchWishlist = createAsyncThunk(
       console.log('Wishlist carregada:', response);
       return response;
     } catch (error) {
-      console.error('Erro ao carregar wishlist:', error.response?.data || error.message);
-      return rejectWithValue(error.response?.data || error.message);
+      console.error('Erro ao carregar wishlist:', error.message);
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -25,8 +25,8 @@ export const addToWishlist = createAsyncThunk(
       console.log('Item adicionado à wishlist:', newItem);
       return newItem;
     } catch (error) {
-      console.error('Erro ao adicionar item à wishlist:', error.response?.data || error.message);
-      return rejectWithValue(error.response?.data || error.message);
+      console.error('Erro ao adicionar item à wishlist:', error.message);
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -35,12 +35,12 @@ export const removeFromWishlist = createAsyncThunk(
   'wishlist/removeFromWishlist',
   async (wishlistId, { rejectWithValue }) => {
     try {
-      await wishlistService.delete(wishlistId);
+      await wishlistService.delete(wishlistId, auth.token); 
       console.log('Item removido da wishlist:', wishlistId);
       return wishlistId;
     } catch (error) {
-      console.error('Erro ao remover item da wishlist:', error.response?.data || error.message);
-      return rejectWithValue(error.response?.data || error.message);
+      console.error('Erro ao remover item da wishlist:', error.message);
+      return rejectWithValue(error.message);
     }
   }
 );

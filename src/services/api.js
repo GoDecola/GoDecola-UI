@@ -13,22 +13,16 @@ api.interceptors.request.use(
     const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log("Token enviado:", token);
     }
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log("Headers da requisição:", config.headers); // Debug
     } else {
-      console.log("Nenhum token encontrado no localStorage"); // Debug
     }
 
     return config;
   },
-  (error) => {
-    console.error("Erro no interceptor:", error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export default api;
