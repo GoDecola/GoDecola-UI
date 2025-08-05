@@ -24,6 +24,9 @@ const travelPackagesSlice = createSlice({
     clearFilteredPackages(state) {
       state.filteredPackages = [];
     },
+    clearPackageDetails: (state) => {
+      state.packageDetails = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -54,7 +57,7 @@ const travelPackagesSlice = createSlice({
       .addCase(fetchTravelPackagesByFilter.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Erro ao buscar pacotes filtrados';
-        state.filteredPackages = []; 
+        state.filteredPackages = [];
       })
       // fetchTravelPackageById
       .addCase(fetchTravelPackageById.pending, (state) => {

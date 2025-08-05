@@ -400,7 +400,7 @@ export const PackageRegistration = () => {
   };
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box sx={{ p: 2, maxWidth: "1330px", margin: "0 auto" }}>
       <Typography variant="h6" color="var(--primary-text-color)">
         Cadastrar Pacote
       </Typography>
@@ -413,14 +413,14 @@ export const PackageRegistration = () => {
           Dados Gerais
         </Typography>
         <CustomTextfield
-          label="Título"
+          label="Título *"
           name="title"
           value={form.title}
           onChange={onChangeForm}
           required
         />
         <CustomTextfield
-          label="Descrição"
+          label="Descrição *"
           name="description"
           value={form.description}
           onChange={onChangeForm}
@@ -435,14 +435,14 @@ export const PackageRegistration = () => {
           }}
         >
           <CustomTextfield
-            label="Destino"
+            label="Destino *"
             name="destination"
             value={form.destination}
             onChange={onChangeForm}
             required
           />
           <CustomPriceField
-            label="Preço"
+            label="Preço *"
             name="price"
             value={form.price}
             onChange={onChangeForm}
@@ -467,7 +467,7 @@ export const PackageRegistration = () => {
           }}
         >
           <CustomDateField
-            label="Data de Início"
+            label="Data de Início *"
             name="startDate"
             value={form.startDate}
             onChange={onChangeForm}
@@ -475,7 +475,7 @@ export const PackageRegistration = () => {
             required
           />
           <CustomDateField
-            label="Data de Término"
+            label="Data de Término *"
             name="endDate"
             value={form.endDate}
             onChange={onChangeForm}
@@ -483,7 +483,7 @@ export const PackageRegistration = () => {
             required
           />
           <CustomNumericField
-            label="Nº max de Hóspedes"
+            label="Nº max de Hóspedes *"
             name="numberGuests"
             value={form.numberGuests}
             onChange={onChangeForm}
@@ -491,7 +491,7 @@ export const PackageRegistration = () => {
             required
           />
           <CustomSelect
-            label="Tipo de Pacote"
+            label="Tipo de Pacote *"
             name="packageType"
             value={form.packageType}
             onChange={handlePackageTypeChange}
@@ -537,7 +537,7 @@ export const PackageRegistration = () => {
               }}
             >
               <CustomNumericField
-                label="Percentual de Desconto (%)"
+                label="Percentual de Desconto (%) *"
                 name="discountPercentage"
                 value={form.discountPercentage}
                 onChange={onChangeForm}
@@ -545,7 +545,7 @@ export const PackageRegistration = () => {
                 required
               />
               <CustomDateField
-                label="Início da Promoção"
+                label="Início da Promoção *"
                 name="promotionStartDate"
                 value={form.promotionStartDate}
                 onChange={onChangeForm}
@@ -553,7 +553,7 @@ export const PackageRegistration = () => {
                 required
               />
               <CustomDateField
-                label="Fim da Promoção"
+                label="Fim da Promoção *"
                 name="promotionEndDate"
                 value={form.promotionEndDate}
                 onChange={onChangeForm}
@@ -585,7 +585,7 @@ export const PackageRegistration = () => {
           }}
         >
           <CustomNumericField
-            label="Número de Banheiros"
+            label="Número de Banheiros *"
             name="accommodationDetails.numberBaths"
             value={form.accommodationDetails.numberBaths}
             onChange={onChangeNestedForm}
@@ -593,7 +593,7 @@ export const PackageRegistration = () => {
             required
           />
           <CustomNumericField
-            label="Número de Camas"
+            label="Número de Camas *"
             name="accommodationDetails.numberBeds"
             value={form.accommodationDetails.numberBeds}
             onChange={onChangeNestedForm}
@@ -650,7 +650,7 @@ export const PackageRegistration = () => {
           onChange={onChangeNestedForm}
         />
 
-        <Divider sx={{ my: 2 }} />
+        <Divider sx={{ my: 2, borderColor: "var(--no-active-tab)" }} />
         <Typography variant="subtitle1" sx={{ color: "var(--text-footer)" }}>
           Endereço
         </Typography>
@@ -664,7 +664,7 @@ export const PackageRegistration = () => {
           }}
         >
           <CustomTextfield
-            label="Logradouro"
+            label="Logradouro *"
             name="accommodationDetails.address.addressLine1"
             value={form.accommodationDetails.address.addressLine1}
             onChange={onChangeNestedForm}
@@ -672,7 +672,7 @@ export const PackageRegistration = () => {
           />
           {isInternational ? (
             <CustomTextfield
-              label="Complemento"
+              label="Complemento *"
               name="accommodationDetails.address.addressLine2"
               value={form.accommodationDetails.address.addressLine2}
               onChange={onChangeNestedForm}
@@ -682,7 +682,7 @@ export const PackageRegistration = () => {
             />
           ) : (
             <CustomNumericField
-              label="Número"
+              label="Número *"
               name="accommodationDetails.address.addressLine2"
               value={form.accommodationDetails.address.addressLine2}
               onChange={onChangeNestedForm}
@@ -691,7 +691,7 @@ export const PackageRegistration = () => {
           )}
           {isInternational ? (
             <CustomTextfield
-              label="ZIP CODE"
+              label="ZIP CODE *"
               name="accommodationDetails.address.zipCode"
               value={form.accommodationDetails.address.zipCode}
               onChange={handleZipCodeChange}
@@ -702,7 +702,7 @@ export const PackageRegistration = () => {
             />
           ) : (
             <CustomNumericField
-              label="CEP"
+              label="CEP *"
               name="accommodationDetails.address.zipCode"
               value={form.accommodationDetails.address.zipCode}
               onChange={handleZipCodeChange}
@@ -722,28 +722,28 @@ export const PackageRegistration = () => {
           }}
         >
           <CustomTextfield
-            label="País"
+            label="País *"
             name="accommodationDetails.address.country"
             value={form.accommodationDetails.address.country}
             onChange={onChangeNestedForm}
             required
           />
           <CustomTextfield
-            label="Estado"
+            label="Estado *"
             name="accommodationDetails.address.state"
             value={form.accommodationDetails.address.state}
             onChange={onChangeNestedForm}
             required
           />
           <CustomTextfield
-            label="Cidade"
+            label="Cidade *"
             name="accommodationDetails.address.city"
             value={form.accommodationDetails.address.city}
             onChange={onChangeNestedForm}
             required
           />
           <CustomTextfield
-            label="Bairro"
+            label="Bairro *"
             name="accommodationDetails.address.neighborhood"
             value={form.accommodationDetails.address.neighborhood}
             onChange={onChangeNestedForm}
@@ -760,19 +760,19 @@ export const PackageRegistration = () => {
           }}
         >
           <CustomNumericField
-            label="Latitude"
+            label="Latitude *"
             name="accommodationDetails.address.latitude"
             value={form.accommodationDetails.address.latitude}
             onChange={onChangeNestedForm}
           />
           <CustomNumericField
-            label="Longitude"
+            label="Longitude *"
             name="accommodationDetails.address.longitude"
             value={form.accommodationDetails.address.longitude}
             onChange={onChangeNestedForm}
           />
         </Box>
-        <Divider sx={{ my: 2 }} />
+        <Divider sx={{ my: 2, borderColor: "var(--no-active-tab)" }} />
         <Typography variant="subtitle1" sx={{ color: "var(--text-footer)" }}>
           Mídias
         </Typography>
@@ -822,7 +822,7 @@ export const PackageRegistration = () => {
             </Button>
           </Box>
         ))}
-        <Divider sx={{ my: 2 }} />
+        <Divider sx={{ my: 2, borderColor: "var(--no-active-tab)" }} />
         <Box sx={{ display: "flex", gap: 2 }}>
           <Button
             type="submit"
