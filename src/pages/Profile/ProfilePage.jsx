@@ -139,7 +139,10 @@ const ProfilePage = () => {
           gap: 3,
         }}
       >
-        <Typography variant="h4" className="title-profile">
+        <Typography
+          variant="h4"
+          sx={{ color: "var(--orange-avanade)", fontWeight: "bold" }}
+        >
           Meu perfil
         </Typography>
         <Box
