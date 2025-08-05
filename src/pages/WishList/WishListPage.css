@@ -1,21 +1,87 @@
 .wish-container {
     background-color: var(--background-color);
     width: 100%;
-    height: auto;
+    min-height: 80vh;
     padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.edit-container-title-wish {
+.wish-title {
     text-align: center;
-    font-size: 28px;
+    font-size: 2.5rem;
     font-weight: bold;
     color: var(--orange-avanade);
+    margin-bottom: 2rem;
 }
 
-.span-wish {
+.wish-empty-state {
     display: flex;
-    justify-content: center;
-    text-align: center;
+    flex-direction: column;
     align-items: center;
-    color: rgb(179, 187, 195);
+    justify-content: center;
+    padding: 3rem;
+    text-align: center;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 600px;
+}
+
+.wish-empty-state h3 {
+    color: #B3BBC3;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.wish-empty-state p {
+    color: #B3BBC3;
+    font-size: 1.1rem;
+}
+
+.wish-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    padding: 1rem;
+}
+
+.wish-item {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.wish-item:hover {
+    transform: translateY(-5px);
+}
+
+.wish-item h3 {
+    color: var(--orange-avanade);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.wish-delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 1rem;
+}
+
+.wish-delete-btn:hover {
+    background-color: #c82333;
 }

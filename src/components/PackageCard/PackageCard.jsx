@@ -60,7 +60,7 @@ export const PackageCard = ({
         style={{ cursor: "pointer" }}
       >
         {isFavorited ? (
-          <FaHeart className="hearthIcon" />
+          <FaHeart className="hearthIcon" /> // onclick para adiconar e retirar 
         ) : (
           <FaRegHeart className="hearthIcon2" />
         )}
