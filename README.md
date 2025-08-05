@@ -1,21 +1,85 @@
-# Go Decola UI
-Passos: 
+# GoDecola UI
+
+**GoDecola UI** é a aplicação frontend desenvolvida em React como parte do projeto final da formação FullStack Avanade DecolaTech VI.  
+A interface consome os dados da GoDecola API e proporciona uma experiência completa para usuários que desejam navegar, reservar e avaliar pacotes de viagem.
+
+## Sumário
+
+- [Preview](#preview)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Instruções de Uso](#instruções-de-uso)
+- [Contribuidores](#contribuidores)
+- [Licença](#licença)
+
+## 💻 Preview
+# TODO: colocar em uma pasta docs/, na raiz, uma imagem geral do site GoDecola e alterar a path  
+![Screenshot da Home](docs/screenshot-home.png)
+
+## Tecnologias Utilizadas
+- React
+- TailwindCSS / CSS Modules
+- Vite
+
+## Instruções de Uso
+
+# TODO: Fazer as instruções de uso para executar o projeto front end
+
+#### Clonar o repositório
+```bash
 git clone https://github.com/GoDecola/GoDecola-UI.git
+```
+#### Acessar o diretório
+```bash
 cd GoDecola-UI
-
-*instala as dependências
+```
+#### Instalar dependências
+```bash
 npm install
+```
+### Configurar as variáveis de ambiente
 
-*roda o projeto no localhost
+Por padrão o frontend está configurado para consumir a API hospedada localmente em http://localhost:5000
+**(colocar a porta correta)**
+
+#### Executar o projeto
+```bash
 npm run dev
+```
+## Contribuidores
 
-////////////////////////////////////////////////////
-*criar branch e mudar para a branch criada
-git checkout -b feature/00-project-base
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/gustavobarbosa7">
+        <img src="https://github.com/gustavobarbosa7.png" width="100px">
+        <br>
+        <sub>
+          <b>Gustavo</b>
+        </sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/lavih2048">
+        <img src="https://github.com/lavih2048.png" width="100px">
+        <br>
+        <sub>
+          <b>Lavínia</b>
+        </sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/RinoaYK">
+        <img src="https://github.com/RinoaYK.png" width="100px">
+        <br>
+        <sub>
+          <b>Lidia</b>
+        </sub>
+      </a>
+    </td>
+  </tr>
+</table>
 
-*adiciona todos os arquivos
-git add --all ou git add .
+## Licença
+Este projeto está licenciado sob a [Licença MIT](LICENSE).
 
-*fazer commit e push
-git commit -m "Primeiras Configs"
-git push origin feature/00-project-base
+# TODO: Adicionar uma Licença MIT na raiz do projeto
