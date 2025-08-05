@@ -12,7 +12,7 @@ import {
   Box,
   IconButton,
 } from "@mui/material";
-import { Edit, Delete, Visibility } from "@mui/icons-material";
+import { Visibility, Delete } from "@mui/icons-material";
 import {
   deleteUserById,
   fetchUsers,
@@ -20,7 +20,7 @@ import {
 import UserModal from "./UserModal";
 import { formatDate } from "../../../../utils/formatDate";
 
-const UserList = ({ clients, loading, error, onEdit, role }) => {
+const UserList = ({ clients, loading, error, role }) => {
   const dispatch = useDispatch();
   const [openDetails, setOpenDetails] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
@@ -86,22 +86,13 @@ const UserList = ({ clients, loading, error, onEdit, role }) => {
             <Visibility />
           </IconButton>
           {role === "ADMIN" && (
-            <>
-              <IconButton
-                onClick={() => params.row.onEdit(params.row.id)}
-                color="primary"
-                aria-label="Editar usuário"
-              >
-                <Edit />
-              </IconButton>
-              <IconButton
-                onClick={() => params.row.onDelete(params.row.id)}
-                color="error"
-                aria-label="Excluir usuário"
-              >
-                <Delete />
-              </IconButton>
-            </>
+            <IconButton
+              onClick={() => handleDeleteClick(params.row.id)}
+              color="error"
+              aria-label="Excluir usuário"
+            >
+              <Delete />
+            </IconButton>
           )}
         </Box>
       ),
@@ -117,7 +108,6 @@ const UserList = ({ clients, loading, error, onEdit, role }) => {
         document: user.document,
         passaport: user.passaport || "N/A",
         createdAt: user.createdAt,
-        onEdit,
         onDelete: handleDeleteClick,
         onView: handleViewClick,
       }))

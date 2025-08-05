@@ -8,8 +8,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Input from '@mui/material/Input';
 import LockIcon from '@mui/icons-material/Lock';
-import React, { useEffect, useState } from 'react';
-import { colors } from '@mui/joy';
+import { useEffect, useState } from 'react';
 import { baseURL } from '../../utils/baseURL';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -78,7 +77,7 @@ export default function RecoveryPasswordPage() {
         return;
       }
     } catch (err) {
-      setError('Não foi possível conectar ao servidor');
+      setError('Não foi possível conectar ao servidor', err);
     } finally {
       setLoading(false);
     }

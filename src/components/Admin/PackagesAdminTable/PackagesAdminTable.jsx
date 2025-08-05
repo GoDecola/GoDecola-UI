@@ -73,7 +73,7 @@ export const PackagesAdminTable = () => {
             }}
           >
             <Tab
-              label="Listar Pacotes"
+              label="Lista de Pacotes"
               value="1"
               sx={{
                 color: 'var(--text-footer)',
@@ -83,7 +83,7 @@ export const PackagesAdminTable = () => {
               }}
             />
             <Tab
-              label="Cadastrar Pacotes"
+              label="Cadastro de Pacote"
               value="2"
               sx={{
                 color: 'var(--text-footer)',
@@ -93,7 +93,7 @@ export const PackagesAdminTable = () => {
               }}
             />
             <Tab
-              label="Editar Pacotes"
+              label="Editar Pacote"
               value="3"
               sx={{
                 color: 'var(--text-footer)',
