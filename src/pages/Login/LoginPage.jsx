@@ -26,6 +26,7 @@ import { loginSuccess } from "../../store/slices/authSlice";
 import { fetchCurrentUser } from "../../store/actions/userActions";
 import { login } from "../../services/authService";
 import { parseJwt } from "../../utils/jwt";
+import { fetchWishlist } from "../../store/actions/wishlistAction";
 
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -87,8 +88,12 @@ export default function LoginPage() {
       try {
         const userData = await dispatch(fetchCurrentUser()).unwrap();
         console.log("Usuário carregado:", userData);
+
+        // Carregar a wishlist após o login
+        await dispatch(fetchWishlist()).unwrap();
+        console.log("Wishlist carregada");
       } catch (err) {
-        console.error("Erro ao buscar usuário:", err);
+        console.error("Erro ao buscar usuário ou wishlist:", err);
       }
 
       resetForm();

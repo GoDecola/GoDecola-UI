@@ -5,13 +5,12 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { IoStar } from "react-icons/io5";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { goToPackageDetails } from "../../routes/coordinator";
 import imageUnavailable from "../../assets/imageUnavailable.jpg";
 import { baseURLMedias } from "../../utils/baseURL";
 import useIsOnRoute from "../../hooks/useIsOnRoute";
+import HeartButton from "../HearthButton/HearthButton";
 
 export const PackageCard = ({
   id,
@@ -22,13 +21,8 @@ export const PackageCard = ({
   isCurrentlyOnPromotion,
   discountPercentage,
 }) => {
-  const [isFavorited, setIsFavorited] = useState(false);
   const navigate = useNavigate();
   const isOnPackageDetailsPage = useIsOnRoute(["/history"]);
-
-  const toggleFavorite = () => {
-    setIsFavorited(!isFavorited);
-  };
 
   const calculateDiscountedPrice = (price, discountPercentage) =>
     price * (1 - discountPercentage);
@@ -37,7 +31,7 @@ export const PackageCard = ({
     Array.isArray(imageSrc) && imageSrc.length > 0 && imageSrc[0].filePath
       ? `${baseURLMedias}${imageSrc[0].filePath}`
       : imageUnavailable;
-  
+
   return (
     <Card
       sx={{
@@ -52,19 +46,7 @@ export const PackageCard = ({
       className="packageCard"
       onClick={() => goToPackageDetails(navigate, id)}
     >
-      <div
-        onClick={(e) => {
-          e.stopPropagation();
-          toggleFavorite();
-        }}
-        style={{ cursor: "pointer" }}
-      >
-        {isFavorited ? (
-          <FaHeart className="hearthIcon" /> // onclick para adiconar e retirar 
-        ) : (
-          <FaRegHeart className="hearthIcon2" />
-        )}
-      </div>
+      <HeartButton packageId={id} />
       <CardMedia sx={{ height: 140 }} image={imageUrl} title={title} />
       <CardContent
         sx={{

@@ -1,23 +1,14 @@
 import "./GalleryImages.css";
 import CarouselPackageDetails from "../../../components/PackageDetails/Carousel/CarouselPackageDetails";
 import { useState, useEffect, useRef } from "react";
-import {
-  FaArrowAltCircleLeft,
-  FaArrowAltCircleRight,
-  FaHeart,
-  FaRegHeart,
-} from "react-icons/fa";
+import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
 import useScrollArrows from "../../../hooks/useScrollArrows";
 import useIsMobile from "../../../hooks/useIsMobile";
+import HeartButton from "../../HearthButton/HearthButton";
 
 const GalleryImages = ({ packageData }) => {
   const isMobile = useIsMobile();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFavorited, setIsFavorited] = useState(false);
-  
-  const toggleFavorite = () => {
-    setIsFavorited(!isFavorited);
-  };
 
   const arrowsRef = useRef(null);
   const arrows = useScrollArrows(arrowsRef);
@@ -66,23 +57,19 @@ const GalleryImages = ({ packageData }) => {
 
     setCurrentIndex(index);
   };
-  
+
   return (
     <div className="galleryImages-container">
       {packageData?.mediasUrl?.length > 0 && (
         <div className="galleryCarousel-wrapper">
           <div
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleFavorite();
+            style={{
+              transform: "scale(1.6)",
+              alignSelf: "flex-end",
+              marginRight: "10px",
             }}
-            style={{ cursor: "pointer" }}
           >
-            {isFavorited ? (
-              <FaHeart className="hearthIconGI" />
-            ) : (
-              <FaRegHeart className="hearthIconGI2" />
-            )}
+            <HeartButton packageId={packageData.id} />
           </div>
           <div className="galleryCarousel-container">
             <CarouselPackageDetails packageData={packageData} ref={arrowsRef} />

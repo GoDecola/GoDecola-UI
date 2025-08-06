@@ -6,7 +6,8 @@ export const fetchWishlist = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const { auth } = getState();
-      const response = await wishlistService.getAll(auth.token);
+      if (!auth.token) throw new Error('Token de autenticação não encontrado');
+      const response = await wishlistService.getWishlist(auth.token);
       console.log('Wishlist carregada:', response);
       return response;
     } catch (error) {
@@ -20,8 +21,14 @@ export const addToWishlist = createAsyncThunk(
   'wishlist/addToWishlist',
   async (packageId, { getState, rejectWithValue }) => {
     try {
+      if (!packageId) throw new Error('packageId is required');
       const { auth } = getState();
-      const newItem = await wishlistService.add(packageId, auth.token);
+      if (!auth.token) throw new Error('Token de autenticação não encontrado');
+      const { wishlist } = getState();
+      if (wishlist.items.some((item) => item.travelPackageId === packageId)) {
+        return rejectWithValue("Item already in wishlist");
+      }
+      const newItem = await wishlistService.addToWishlist(packageId, auth.token);
       console.log('Item adicionado à wishlist:', newItem);
       return newItem;
     } catch (error) {
@@ -33,11 +40,13 @@ export const addToWishlist = createAsyncThunk(
 
 export const removeFromWishlist = createAsyncThunk(
   'wishlist/removeFromWishlist',
-  async (wishlistId, { rejectWithValue }) => {
+  async (id, { rejectWithValue, dispatch }) => {
     try {
-      await wishlistService.delete(wishlistId, auth.token); 
-      console.log('Item removido da wishlist:', wishlistId);
-      return wishlistId;
+      if (!id) throw new Error('id is required');
+      await wishlistService.deleteFromWishlist(id);
+      console.log('Item removido da wishlist:', id);
+      dispatch(fetchWishlist());
+      return id;
     } catch (error) {
       console.error('Erro ao remover item da wishlist:', error.message);
       return rejectWithValue(error.message);
