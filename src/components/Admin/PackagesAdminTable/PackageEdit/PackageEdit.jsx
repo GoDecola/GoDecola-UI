@@ -16,6 +16,7 @@ import {
   IconButton,
   Card,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
@@ -35,6 +36,7 @@ import {
   updateTravelPackageById,
   fetchTravelPackages,
 } from "../../../../store/actions/travelPackagesActions";
+import SearchIcon from "@mui/icons-material/Search";
 
 export const PackageEdit = ({
   packages,
@@ -315,26 +317,36 @@ export const PackageEdit = ({
     [form.packageType]
   );
 
-  const handleZipCodeChange = async (e) => {
+  const handleZipCodeInputChange = (e) => {
     const { value } = e.target;
-    onChangeNestedForm(e);
-    setFormError(null);
 
-    if (isInternational) {
-      setForm((prev) => ({
-        ...prev,
-        accommodationDetails: {
-          ...prev.accommodationDetails,
-          address: {
-            ...prev.accommodationDetails.address,
-            zipCode: value,
-          },
+    setForm((prev) => ({
+      ...prev,
+      accommodationDetails: {
+        ...prev.accommodationDetails,
+        address: {
+          ...prev.accommodationDetails.address,
+          zipCode: value,
         },
-      }));
-    } else {
+      },
+    }));
+    setFormError(null);
+  };
+
+  const handleZipCodeSearch = async () => {
+    const zipCode = form.accommodationDetails.address.zipCode;
+
+    if (!isInternational && (!zipCode || !zipCode.match(/^\d{5}-\d{3}$/))) {
+      setFormError("CEP inválido. Use o formato 00000-000.");
+      return;
+    }
+
+    if (!isInternational) {
       setIsLoadingZipCode(true);
+      setFormError(null);
+
       try {
-        const addressData = await fetchAddressByZipCode(value);
+        const addressData = await fetchAddressByZipCode(zipCode);
         setForm((prev) => ({
           ...prev,
           accommodationDetails: {
@@ -347,9 +359,9 @@ export const PackageEdit = ({
         }));
       } catch (err) {
         setFormError(
-          "Não foi possível consultar o CEP, verifique o valor informado",
-          err
+          "Não foi possível consultar o CEP, verifique o valor informado"
         );
+        console.log("Erro ao consultar CEP:", err.message);
       } finally {
         setIsLoadingZipCode(false);
       }
@@ -383,6 +395,7 @@ export const PackageEdit = ({
       !form.accommodationDetails.numberBaths ||
       !form.accommodationDetails.numberBeds ||
       !form.accommodationDetails.address.addressLine1 ||
+      !form.accommodationDetails.address.addressLine2 ||
       !form.accommodationDetails.address.zipCode ||
       !form.accommodationDetails.address.country ||
       !form.accommodationDetails.address.state ||
@@ -586,7 +599,7 @@ export const PackageEdit = ({
   };
 
   return (
-    <Box sx={{ p: 2, maxWidth: "1330px", margin: "0 auto"}}>
+    <Box sx={{ p: 2, maxWidth: "1330px", margin: "0 auto" }}>
       <Card
         sx={{
           maxWidth: 360,
@@ -662,10 +675,19 @@ export const PackageEdit = ({
           >
             {isEditing ? <CloseIcon /> : <EditIcon />}
           </IconButton>
+
           <IconButton
             onClick={handleOpenDeleteConfirmModal}
-            sx={{ color: "var(--orange-avanade)" }}
-            disabled={!isEditing || !selectedPackageId}
+            sx={{
+              color: isEditing
+                ? "var(--text-footer)"
+                : "var(--icons-login-hover)",
+
+              "&:hover": {
+                color: "red",
+              },
+            }}
+            disabled={!isEditing ? true : false}
           >
             <DeleteIcon />
           </IconButton>
@@ -983,12 +1005,13 @@ export const PackageEdit = ({
               disabled={!isEditing}
             />
           )}
+
           {isInternational ? (
             <CustomTextfield_Disable_NOTRequired
               label="ZIP CODE *"
               name="accommodationDetails.address.zipCode"
               value={form.accommodationDetails.address.zipCode}
-              onChange={handleZipCodeChange}
+              onChange={handleZipCodeInputChange}
               required
               disabled={
                 isLoadingZipCode ||
@@ -997,15 +1020,42 @@ export const PackageEdit = ({
               }
             />
           ) : (
-            <CustomNumericField
-              label="CEP *"
-              name="accommodationDetails.address.zipCode"
-              value={form.accommodationDetails.address.zipCode}
-              onChange={handleZipCodeChange}
-              required
-              disabled={isLoadingZipCode || !isEditing}
-              mask="00000-000"
-            />
+            <Box sx={{ position: "relative", minWidth: "300px" }}>
+              <CustomNumericField
+                label="CEP *"
+                name="accommodationDetails.address.zipCode"
+                value={form.accommodationDetails.address.zipCode}
+                onChange={handleZipCodeInputChange}
+                required
+                disabled={isLoadingZipCode || !isEditing}
+                mask="00000-000"
+                sx={{ width: "100%" }}
+              />
+              <Tooltip title="Procurar CEP" arrow>
+                <Button
+                  variant="contained"
+                  onClick={handleZipCodeSearch}
+                  disabled={isLoadingZipCode || !isEditing}
+                  sx={{
+                    position: "absolute",
+                    right: 8,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    minWidth: 36,
+                    height: 36,
+                    borderRadius: "50%",
+                    backgroundColor: "var(--orange-avanade)",
+                    color: "white",
+                    padding: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <SearchIcon fontSize="small" />
+                </Button>
+              </Tooltip>
+            </Box>
           )}
         </Box>
         <Box
