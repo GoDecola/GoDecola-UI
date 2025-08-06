@@ -1,28 +1,16 @@
 import './RecoveryPasswordPage.css';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControl from '@mui/material/FormControl';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import Input from '@mui/material/Input';
-import LockIcon from '@mui/icons-material/Lock';
+import { Box, Typography, Button, Container, Alert, CircularProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { baseURL } from '../../utils/baseURL';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { CustomPasswordField } from '../../components/CustomInputs/CustomPasswordField';
 
 export default function RecoveryPasswordPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (event) => event.preventDefault();
-  const handleMouseUpPassword = (event) => event.preventDefault();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -84,73 +72,75 @@ export default function RecoveryPasswordPage() {
   }
 
   return (
-    <div className="container-pwd">
-      <h2>RECUPERE SUA SENHA</h2>
-      <form className="edit-form-password" onSubmit={handleSubmit}>
-        {/* Campo de senha com ícone de visibilidade e ícone do cadeado */}
-        <Box sx={{ label: { color: 'var(--primary-text-color)' }, display: 'flex', alignItems: 'flex-end', width: '94%', ml: 1, mb: 2 }}>
-          <LockIcon sx={{ color: 'var(--primary-text-color)', mr: 1, my: 0.5 }} />
-          <FormControl sx={{ width: '100%' }} variant="standard">
-            <InputLabel htmlFor="new-password"> Digite sua nova Senha </InputLabel>
-            <Input
-              id="new-password"
-              type={showPassword ? 'text' : 'password'}
+    <Container maxWidth="sm" backgroundColor="var(--surface-bg)" sx={{ padding: '24px' }}>
+      <Box
+        sx={{
+          marginTop: 8,
+          marginBottom: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          backgroundColor: 'var(--surface-bg)',
+          padding: { xs: 2, md: 4 },
+          borderRadius: 2,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          transition: 'background-color 0.25s ease-in-out',
+        }}
+      >
+        <Typography 
+          component="h1" 
+          variant="h5" 
+          sx={{ color: 'var(--orange-avanade-invert)', fontWeight: 'bold' }}
+        >
+          RECUPERE SUA SENHA
+        </Typography>
+        <Box 
+          component="form" 
+          onSubmit={handleSubmit} 
+          noValidate 
+          sx={{ mt: 3, width: '100%' }}
+        >
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <CustomPasswordField
+              label="Digite sua nova senha"
+              name="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    onMouseUp={handleMouseUpPassword}
-                    edge="end"
-                    sx={{ color: 'var(--primary-text-color)' }}
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
             />
-          </FormControl>
-        </Box>
-        {/* Campo de confirmar senha com ícone de visibilidade e ícone do cadeado */}
-        <Box sx={{ label: { color: 'var(--primary-text-color)' }, display: 'flex', alignItems: 'flex-end', width: '94%', ml: 1, mb: 2 }}>
-          <LockIcon sx={{ color: 'var(--primary-text-color)', mr: 1, my: 0.5 }} />
-          <FormControl sx={{ width: '100%'}} variant="standard">
-            <InputLabel htmlFor="confirm-password">Repita sua nova senha</InputLabel>
-            <Input
-              id="confirm-password"
-              type={showPassword ? 'text' : 'password'}
+            <CustomPasswordField
+              label="Repita sua nova senha"
+              name="confirm-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    onMouseUp={handleMouseUpPassword}
-                    edge="end"
-                    sx={{ color: 'var(--primary-text-color)'}}
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
             />
-          </FormControl>
+          </Box>
+          
+          {error && <Alert severity="error" sx={{ mt: 2, width: '100%' }}>{error}</Alert>}
+          {message && <Alert severity="success" sx={{ mt: 2, width: '100%' }}>{message}</Alert>}
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            disabled={loading || !!message}
+            sx={{
+              mt: 4,
+              mb: 2,
+              padding: '0.8rem 4rem',
+              borderRadius: '15px',
+              fontWeight: 'bold',
+              background: 'linear-gradient(to right, #f15a29, #e94e1b)',
+              '&:hover': {
+                background: 'linear-gradient(to right, #e94e1b, #f15a29)',
+                transform: 'scale(1.02)'
+              },
+              transition: 'transform 0.2s ease-in-out, background 0.3s',
+            }}
+          >
+            {loading ? <CircularProgress size={24} sx={{color: 'white'}} /> : 'ENVIAR'}
+          </Button>
         </Box>
-
-        {message && <p className="success-message">{message}</p>}
-        {error && <p className="error-message">{error}</p>}
-
-      <div className='button-wrapper'>
-        <button type="submit" className="btn-recovery" disabled={loading || !!message}>
-          {loading ? 'ENVIANDO...' : 'ENVIAR'}
-        </button>
-      </div>
-      </form>
-    </div>
+      </Box>
+    </Container>
   );
 }

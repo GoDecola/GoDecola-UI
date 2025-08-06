@@ -145,8 +145,8 @@ export const UserRegistration = () => {
 
   return (
     <Box sx={{ p: 2, maxWidth: "1330px", margin: "0 auto" }}>
-      <Typography variant="h6" color="var(--primary-text-color)">
-        Cadastrar Usuário
+      <Typography variant="h6" color="var(--orange-avanade)">
+        Cadastro de Usuário
       </Typography>
       <Box
         component="form"

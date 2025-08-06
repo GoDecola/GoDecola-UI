@@ -218,7 +218,7 @@ export default function LoginPage() {
           <div className="login-between">
             <p className="text-end">
               <span className="highlight-orange">
-                TA AFIM DE VIAJAR ?<br />
+                TÁ A FIM DE VIAJAR? <br />
               </span>
               <span className="highlight-orange">
                 VEM DE <strong className="highlight-purple"> GO DECOLA </strong>

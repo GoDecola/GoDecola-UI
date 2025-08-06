@@ -22,7 +22,7 @@ const HomePage = () => {
     (state) => state.travelPackages,
     shallowEqual
   );
-
+  
   useEffect(() => {
     dispatch(fetchTravelPackages());
   }, [dispatch]);

@@ -8,6 +8,7 @@ export const CustomDateField = ({
   required,
   min,
   max,
+  disabled = false,
 }) => (
   <TextField
     label={label}
@@ -17,6 +18,7 @@ export const CustomDateField = ({
     value={value}
     onChange={onChange}
     required={required}
+    disabled={disabled}
     inputProps={{
       min,
       max,
@@ -32,6 +34,13 @@ export const CustomDateField = ({
         color: "var(--text-footer)",
       },
 
+      "& .MuiInputBase-input.Mui-disabled": {
+        color: "var(--no-active-tab)",
+        WebkitTextFillColor: "var(--no-active-tab)",
+      },
+      "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: "var(--no-active-tab) !important",
+      },
       "&:hover input": {
         color: "var(--icons-login-color)",
       },
