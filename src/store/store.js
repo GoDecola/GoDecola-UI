@@ -4,6 +4,7 @@ import userReducer from './slices/userSlice';
 import travelPackagesReducer from './slices/travelPackagesSlice';
 import bookingReducer from './slices/bookingSlice';
 import paymentReducer from './slices/paymentSlice';
+import reviewReducer from './slices/reviewSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   travelPackages: travelPackagesReducer,
   bookings: bookingReducer,
   payments: paymentReducer,
+  reviews: reviewReducer,
 });
 
 const loadToken = () => {
@@ -45,6 +47,11 @@ const preloadedState = {
     payments: [],
     paymentDetails: null,
     checkoutResult: null,
+    loading: false,
+    error: null,
+  },
+  reviews: {
+    reviews: [],
     loading: false,
     error: null,
   },

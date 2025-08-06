@@ -1,23 +1,33 @@
 import "./ReviewCarousel.css";
-import dataReview from "../../../reviews.mock.json";
 import CarouselReview from "./Carousel/CarouselReview";
 import { useRef } from "react";
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
 import useScrollArrows from "../../../hooks/useScrollArrows";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { goToReviews } from "../../../routes/coordinator";
 import ramoOliveira from "../../../assets/ramo-de-oliveira.png";
 import useIsMobile from "../../../hooks/useIsMobile";
+import { fetchReviewsByPackageId } from "../../../store/actions/reviewActions";
 
 const ReviewCarousel = ({ packageId }) => {
   const navigate = useNavigate();
-  const filteredReviews = dataReview.filter(
-    (review) => review.packageId === packageId
-  );
+  const dispatch = useDispatch();
+  const { 
+    reviews: filteredReviews, loading, error 
+  } = useSelector((state) => state.reviews);
+  
   const isMobile = useIsMobile();
 
+  useEffect(() => {
+    if (packageId) {
+      dispatch(fetchReviewsByPackageId(packageId));
+    }
+  }, [dispatch, packageId]);
+
   let averageRating = 0;
-  if (filteredReviews.length > 0) {
+  if (filteredReviews && filteredReviews.length > 0) {
     const totalRating = filteredReviews.reduce(
       (sum, review) => sum + review.rating,
       0
@@ -39,10 +49,18 @@ const ReviewCarousel = ({ packageId }) => {
     });
   };
 
-  if (!filteredReviews.length > 0) {
+  if (!filteredReviews || filteredReviews.length === 0) {
     return (
       <div className="ReviewNotFound">Não possui nenhum comentário ainda!</div>
     );
+  }
+
+  if (loading) {
+    return <div className="ReviewNotFound">Carregando comentários...</div>;
+  }
+
+  if (error) {
+    return <div className="ReviewNotFound">Erro ao carregar os comentários.</div>;
   }
 
   return (
