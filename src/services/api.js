@@ -14,15 +14,13 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    } else {
-    }
-
+    console.log('Request:', config.method.toUpperCase(), config.url, 'Data:', config.data, 'Base URL:', baseURL);
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    console.error('Request interceptor error:', error);
+    return Promise.reject(error);
+  }
 );
 
 export default api;
