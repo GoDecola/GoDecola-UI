@@ -65,15 +65,10 @@ export const goToHomeSupport = (navigate) => {
 export const goToCheckout = (navigate, reservationId) => {
   navigate('/checkout', { state: { reservationId } });
 };
-
-export const goToPaymentPending = (navigate, paymentId) => {
-  navigate(`/payment/pending/${paymentId}`);
+export const goToPaymentSuccess = (navigate) => {
+  navigate("/payment-success");
 };
 
-export const goToPaymentFailure = (navigate, paymentId = "") => {
-  if (paymentId) {
-    navigate(`/payment/failure/${paymentId}`);
-  } else {
-    navigate("/payment/failure");
-  }
+export const goToPaymentCancel = (navigate) => {
+  navigate("/payment-cancel");
 };
