@@ -28,6 +28,7 @@ import {
 import useIsMobile from "../../../../hooks/useIsMobile";
 import { fetchAddressByZipCode } from "../../../../services/addressService";
 import { useDropzone } from "react-dropzone";
+import { fetchTravelPackages } from "../../../../store/actions/travelPackagesActions";
 
 export const PackageRegistration = () => {
   const dispatch = useDispatch();
@@ -36,6 +37,7 @@ export const PackageRegistration = () => {
     (state) => state.travelPackages
   );
   const [formError, setFormError] = useState(null);
+  const [formSuccess, setFormSuccess] = useState("");
   const [isLoadingZipCode, setIsLoadingZipCode] = useState(false);
   const [mediaFiles, setMediaFiles] = useState([]);
   const [openSuccessModal, setOpenSuccessModal] = useState(false);
@@ -317,14 +319,20 @@ export const PackageRegistration = () => {
     };
 
     try {
-      //console.log("Submitting package creation:", payload);
+      console.log("Submitting package creation:", payload);
       const packageResponse = await dispatch(
         createTravelPackage(payload)
       ).unwrap();
-      //console.log("Package response:", packageResponse);
+      console.log("Package response:", packageResponse);
 
-      const packageId = packageResponse[0]?.id;
+      //const packageId = packageResponse[0]?.id;
       //console.log("Package ID:", packageId);
+
+      const createdPackage = Array.isArray(packageResponse)
+        ? packageResponse[0]
+        : packageResponse;
+
+      const packageId = createdPackage?.id;
 
       if (!packageId) {
         throw new Error("Package ID not found in response");
@@ -351,10 +359,12 @@ export const PackageRegistration = () => {
         console.log("Media upload response:", mediaResponse);
       }
 
-      resetForm();
+      await dispatch(fetchTravelPackages());
+
       setMediaFiles([]);
-      setFormError("Pacote e mídias cadastrados com sucesso");
+      setFormSuccess("Pacote e mídias cadastrados com sucesso");
       setOpenSuccessModal(true);
+      resetForm();
     } catch (err) {
       console.error("Submission error:", err);
       setFormError(
@@ -401,8 +411,8 @@ export const PackageRegistration = () => {
 
   return (
     <Box sx={{ p: 2, maxWidth: "1330px", margin: "0 auto" }}>
-      <Typography variant="h6" color="var(--primary-text-color)">
-        Cadastrar Pacote
+      <Typography variant="h6" color="var(--orange-avanade)">
+        Cadastro de Pacote
       </Typography>
       <Box
         component="form"
@@ -807,7 +817,7 @@ export const PackageRegistration = () => {
               flexDirection: isMobile ? "column" : "row",
             }}
           >
-            <Typography>
+            <Typography sx={{ color: "var(--text-footer)" }}>
               {media.file ? media.file.name : "Nenhum arquivo selecionado"}
             </Typography>
             <Button
@@ -848,7 +858,7 @@ export const PackageRegistration = () => {
         </Box>
       </Box>
       <Snackbar
-        open={!!formError && !formError.includes("sucesso")}
+        open={!!formError}
         autoHideDuration={6000}
         onClose={() => setFormError(null)}
       >
@@ -856,6 +866,7 @@ export const PackageRegistration = () => {
           {formError || reduxError}
         </Alert>
       </Snackbar>
+
       <Dialog
         open={openSuccessModal}
         onClose={handleCloseSuccessModal}

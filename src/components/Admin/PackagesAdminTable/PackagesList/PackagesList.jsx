@@ -7,6 +7,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogContentText,
   DialogActions,
   Button,
   Box,
@@ -17,7 +18,6 @@ import { deleteTravelPackageById } from "../../../../store/actions/travelPackage
 import PackageModal from "./PackageModal";
 
 const PackagesList = ({ packages, loading, error, onEdit, role }) => {
-  
   const columns = [
     { field: "id", headerName: "ID", minWidth: 70 },
     { field: "title", headerName: "Título", minWidth: 218 },
@@ -250,13 +250,29 @@ const PackagesList = ({ packages, loading, error, onEdit, role }) => {
         handleCloseDetails={handleCloseDetails}
       />
       {/* Modal de Confirmação de Exclusão */}
-      <Dialog open={openDelete} onClose={handleCloseDelete}>
-        <DialogTitle>Confirmar Exclusão</DialogTitle>
+      <Dialog
+        open={openDelete}
+        onClose={handleCloseDelete}
+        aria-labelledby="delete-confirm-dialog-title"
+      >
+        <DialogTitle id="delete-confirm-dialog-title">
+          Confirmar Exclusão
+        </DialogTitle>
         <DialogContent>
-          <Typography>Deseja realmente excluir este pacote?</Typography>
+          <DialogContentText>
+            Tem certeza de que deseja excluir este pacote? Esta ação não pode
+            ser desfeita.
+          </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDelete} variant="outlined">
+          <Button
+            onClick={handleCloseDelete}
+            variant="outlined"
+            sx={{
+              borderColor: "var(--orange-avanade)",
+              color: "var(--orange-avanade)",
+            }}
+          >
             Cancelar
           </Button>
           <Button
@@ -265,7 +281,7 @@ const PackagesList = ({ packages, loading, error, onEdit, role }) => {
             color="error"
             sx={{ color: "white" }}
           >
-            Confirmar
+            Excluir
           </Button>
         </DialogActions>
       </Dialog>

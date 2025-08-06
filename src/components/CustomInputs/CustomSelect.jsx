@@ -10,11 +10,19 @@ export const CustomSelect = ({
   onChange,
   options,
   required,
+  disabled = false,
 }) => (
   <FormControl
     required={required}
     sx={{
       width: "100%",
+      "& .MuiInputBase-input.Mui-disabled": {
+        color: "var(--no-active-tab)",
+        WebkitTextFillColor: "var(--no-active-tab)",
+      },
+      "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: "var(--no-active-tab) !important",
+      },
       "& .MuiInputLabel-root": {
         color: "var(--icons-login-color)",
       },
@@ -32,6 +40,7 @@ export const CustomSelect = ({
       value={value}
       onChange={onChange}
       label={label}
+      disabled={disabled}
       sx={{
         color: "var(--text-footer)",
         input: {
