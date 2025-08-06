@@ -143,5 +143,14 @@ const travelPackagesSlice = createSlice({
   },
 });
 
+export {
+  fetchTravelPackages,
+  fetchTravelPackagesByFilter,
+  fetchTravelPackageById,
+  createTravelPackage,
+  updateTravelPackageById,
+  deleteTravelPackageById,
+  uploadTravelPackageMedia,
+} from '../actions/travelPackagesActions';
 export const { clearPackageDetails } = travelPackagesSlice.actions;
 export default travelPackagesSlice.reducer;
