@@ -1,22 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkout } from '../../store/actions/paymentActions';
 import { clearError, clearCheckoutResult } from '../../store/slices/paymentSlice';
-import { goToPaymentSuccess } from '../../routes/coordinator';
-import './CheckoutPage.css'; // Arquivo CSS para estilos
+import './CheckoutPage.css';
 
 const CheckoutPage = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const reservationId = location.state?.reservationId;
   const [paymentMethod, setPaymentMethod] = useState('');
 
-  // Estados do Redux
-  const { checkoutResult, loading, error } = useSelector((state) => state.payments);
+  const { loading, error } = useSelector((state) => state.payments);
 
-  // Limpar erro ao montar o componente e resultado ao desmontar
   useEffect(() => {
     dispatch(clearError());
     return () => {
@@ -24,32 +20,26 @@ const CheckoutPage = () => {
     };
   }, [dispatch]);
 
-  // Redirecionar após checkout
-  useEffect(() => {
-    if (checkoutResult) {
-      console.log('Pagamento processado:', checkoutResult);
-      const { redirectUrl, status, reservationId: resultReservationId } = checkoutResult;
-
-      if (redirectUrl && status === 'PENDING') {
-        // Redirecionar para o Stripe checkout
-        window.location.href = redirectUrl;
-      } else if (resultReservationId) {
-        // Usar reservationId para navegar para a página de sucesso
-        goToPaymentSuccess(navigate, resultReservationId);
-      } else {
-        console.error('reservationId não encontrado em checkoutResult:', checkoutResult);
-        navigate('/error', { state: { message: 'ID da reserva não encontrado no resultado do pagamento' } });
-      }
-    }
-  }, [checkoutResult, navigate]);
-
-  // Função para processar o pagamento
   const handlePayment = async () => {
     const methodInfo = {
       reservationId,
       method: paymentMethod,
     };
-    await dispatch(checkout(methodInfo));
+    console.log('Enviando para checkout:', methodInfo);
+    const result = await dispatch(checkout(methodInfo));
+    console.log('Resultado da action:', result);
+    console.log('Payload completo:', result.payload);
+
+    if (paymentMethod === 'card') {
+      if (result.payload?.redirectUrl) {
+        console.log('Redirecionando para Stripe:', result.payload.redirectUrl);
+        window.location.href = result.payload.redirectUrl;
+      } else {
+        console.error('redirectUrl não encontrado para card:', result.payload);
+      }
+    } else {
+      console.log(`Nenhuma ação para paymentMethod: ${paymentMethod}`);
+    }
   };
 
   if (!reservationId) {
@@ -64,11 +54,10 @@ const CheckoutPage = () => {
   }
 
   return (
-
     <div className="checkout-page">
       <div className="checkout-container">
         <div className="checkout-header">
-          <h1 style={{ color: "var(--primary-text-color)", opacity: 0.6 }}>VAMOS DECOLAR</h1>
+          <h1 style={{ color: 'var(--primary-text-color)', opacity: 0.6 }}>VAMOS DECOLAR</h1>
           <div className="reservation-info">
             <span className="reservation-label">ID da Reserva:</span>
             <span className="reservation-id">{reservationId}</span>
@@ -77,12 +66,12 @@ const CheckoutPage = () => {
 
         <div className="checkout-form">
           <div className="payment-section">
-            <h3 style={{ color: "var(--primary-text-color)", opacity: 0.6 }}>Métodos de Pagamento</h3>
+            <h3 style={{ color: 'var(--primary-text-color)', opacity: 0.6 }}>Métodos de Pagamento</h3>
             <div className="payment-methods">
               <label className="payment-option">
                 <input
                   type="radio"
-                  name="card"
+                  name="paymentMethod"
                   value="card"
                   checked={paymentMethod === 'card'}
                   onChange={(e) => setPaymentMethod(e.target.value)}
@@ -96,7 +85,7 @@ const CheckoutPage = () => {
               <label className="payment-option">
                 <input
                   type="radio"
-                  name="Boleto"
+                  name="paymentMethod"
                   value="Boleto"
                   checked={paymentMethod === 'Boleto'}
                   onChange={(e) => setPaymentMethod(e.target.value)}
@@ -107,28 +96,26 @@ const CheckoutPage = () => {
                 </div>
               </label>
 
-
               <label className="payment-option">
                 <input
                   type="radio"
-                  name="PIX"
+                  name="paymentMethod"
                   value="PIX"
                   checked={paymentMethod === 'PIX'}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 />
                 <div className="payment-content">
-                  <span className="payment-icon"></span>
+                  <span className="payment-icon">💸</span>
                   <span>PIX</span>
                 </div>
               </label>
-
             </div>
           </div>
 
           <div className="checkout-actions">
-            <button 
+            <button
               className={`checkout-button ${!paymentMethod || loading ? 'disabled' : ''}`}
-              onClick={handlePayment} 
+              onClick={handlePayment}
               disabled={!paymentMethod || loading}
             >
               {loading ? (
@@ -151,7 +138,6 @@ const CheckoutPage = () => {
         </div>
       </div>
     </div>
-
   );
 };
 

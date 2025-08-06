@@ -66,10 +66,6 @@ export const goToCheckout = (navigate, reservationId) => {
   navigate('/checkout', { state: { reservationId } });
 };
 
-export const goToPaymentSuccess = (navigate, paymentId) => {
-  navigate(`/payment/success/${paymentId}`);
-};
-
 export const goToPaymentPending = (navigate, paymentId) => {
   navigate(`/payment/pending/${paymentId}`);
 };
