@@ -1,0 +1,240 @@
+.checkout-page {
+  min-height: 100vh;
+  background: var(--secondary-text-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.checkout-container {
+  background: var(  --background-color);
+  border-radius: 16px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.checkout-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.checkout-header h1 {
+ color: var(--secondary-text-color);
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.reservation-info {
+  background: #f7fafc;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.reservation-label {
+  color: #718096;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.reservation-id {
+  color: #2d3748;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.payment-section h3 {
+  color: #2d3748;
+  font-size: 20px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border: 2px solid #d9dce1;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.payment-option:hover {
+  border-color: #667eea;
+  background-color: #f7fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.payment-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.payment-option input[type="radio"]:checked + .payment-content {
+  color: #667eea;
+}
+
+.payment-option:has(input:checked) {
+  border-color: #667eea;
+  background-color: #edf2f7;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.payment-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #2d3748;
+  transition: color 0.3s ease;
+}
+
+.payment-icon {
+  font-size: 24px;
+}
+
+.checkout-actions {
+  margin-top: 30px;
+}
+
+.checkout-button {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, #ff5800);
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.checkout-button:hover:not(.disabled) {
+  transform: translateY(-2px);
+}
+
+
+.checkout-button.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  background-color: #fed7d7;
+  color: #c53030;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-left: 4px solid #c53030;
+}
+
+.error-icon {
+  font-size: 20px;
+}
+
+.error-message p {
+  margin: 0;
+  font-weight: 500;
+}
+
+.checkout-error {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.error-container {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.error-container h2 {
+  color: #c53030;
+  margin-bottom: 15px;
+}
+
+.error-container p {
+  color: #2d3748;
+  font-size: 16px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .checkout-container {
+    padding: 30px 20px;
+    margin: 20px;
+  }
+  
+  .checkout-header h1 {
+    font-size: 24px;
+  }
+  
+  .payment-option {
+    padding: 15px;
+  }
+  
+  .checkout-button {
+    padding: 16px;
+    font-size: 15px;
+  }
+}
