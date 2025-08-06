@@ -4,6 +4,7 @@ import userReducer from './slices/userSlice';
 import travelPackagesReducer from './slices/travelPackagesSlice';
 import bookingReducer from './slices/bookingSlice';
 import paymentReducer from './slices/paymentSlice';
+import wishlistReducer from './slices/wishlistSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   travelPackages: travelPackagesReducer,
   bookings: bookingReducer,
   payments: paymentReducer,
+  wishlist: wishlistReducer,
 });
 
 const loadToken = () => {
