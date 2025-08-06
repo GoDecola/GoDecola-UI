@@ -12,9 +12,6 @@ import SearchPackagesPage from "../pages/SearchPackages/SearchPackagesPage";
 import AllReviewsPage from "../pages/Review/AllReviewsPage";
 import BookingPage from "../pages/Booking/BookingPage";
 import CheckoutPage from "../pages/Checkout/CheckoutPage";
-import PaymentSuccess from "../pages/Payment/PaymentSuccess";
-import PaymentFailure from "../pages/Payment/PaymentFailure";
-import PaymentPending from "../pages/Payment/PaymentPending";
 import ProfilePage from "../pages/Profile/ProfilePage";
 import WishListPage from "../pages/WishList/WishListPage";
 import HistoryPage from "../pages/History/HistoryPage";
@@ -50,30 +47,7 @@ export const Router = () => {
             </PrivateRoute>
           }
         />
-        <Route
-          path="payment/success/:paymentId"
-          element={
-            <PrivateRoute>
-              <PaymentSuccess />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="payment/pending/:paymentId"
-          element={
-            <PrivateRoute>
-              <PaymentPending />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="payment/failure/:paymentId"
-          element={
-            <PrivateRoute>
-              <PaymentFailure />
-            </PrivateRoute>
-          }
-        />
+        
         <Route
           path="profile"
           element={
