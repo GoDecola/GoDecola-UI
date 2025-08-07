@@ -7,7 +7,7 @@ import ExpandableText from '../ExpandableText';
 import { useState } from 'react'; 
 import { useSelector } from 'react-redux'; 
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import { EditReviewModal } from '../EditReviewModal/EditReviewModal';
+import { ReviewModal } from '../ReviewModal/ReviewModal';
 import { ConfirmDeleteModal } from '../ConfirmDeleteModal/ConfirmDeleteModal';
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -46,9 +46,10 @@ export const ReviewCard = ({ review, length }) => {
 
     return (
         <div className='reviewCard'>
-            <EditReviewModal 
+            <ReviewModal 
                 isOpen={isEditModalOpen} 
                 onRequestClose={() => setEditModalOpen(false)} 
+                mode="edit"
                 review={review} 
             />
             <ConfirmDeleteModal 

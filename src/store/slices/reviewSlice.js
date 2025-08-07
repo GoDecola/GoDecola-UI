@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchReviewsByPackageId, createReview, updateReview, deleteReview  } from '../actions/reviewActions';
+import { fetchReviewsByPackageId, createReview, updateReview, deleteReview, fetchMyReviews } from '../actions/reviewActions';
 
 const initialState = {
   reviews: [],
+  myReviews: [],
   loading: false,
   error: null,
 };
@@ -11,6 +12,9 @@ const reviewSlice = createSlice({
   name: 'reviews',
   initialState,
   reducers: {
+    clearReviewError: (state) => {
+      state.error = null;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -47,6 +51,9 @@ const reviewSlice = createSlice({
       .addCase(deleteReview.fulfilled, (state, action) => {
         state.reviews = state.reviews.filter(r => r.id !== action.payload);
       })
+      .addCase(fetchMyReviews.fulfilled, (state, action) => {
+        state.myReviews = action.payload;
+      })
   },
 });
 
@@ -72,5 +79,7 @@ const reviewSlice = createSlice({
     };
   }) : [];
 };
+
+export const { clearReviewError } = reviewSlice.actions;
 
 export default reviewSlice.reducer;

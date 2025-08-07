@@ -21,7 +21,8 @@ export const createReview = createAsyncThunk(
       const response = await reviewService.createReview(reviewData, auth.token);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || 'Erro ao criar a review.');
+      const errorMessage = error.response?.data?.title || error.response?.data || 'Não foi possível enviar a sua avaliação. Tente novamente.';
+      return rejectWithValue(errorMessage);
     }
   }
 );
@@ -48,6 +49,19 @@ export const deleteReview = createAsyncThunk(
       return reviewId;
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Erro ao deletar a review.');
+    }
+  }
+);
+
+export const fetchMyReviews = createAsyncThunk(
+  'reviews/fetchMyReviews',
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const { auth } = getState();
+      const response = await reviewService.getMyReviews(auth.token);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Erro ao buscar suas avaliações.');
     }
   }
 );
