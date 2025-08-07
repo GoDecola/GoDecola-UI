@@ -11,13 +11,13 @@ import BookingsAdminTable from "../../../components/Admin/BookingsAdminTable/Boo
 import { UsersAdminTable } from "../../../components/Admin/UsersAdminTable/UsersAdminTable";
 import { ReviewsAdminTable } from "../../../components/Admin/ReviewsAdminTable/ReviewsAdminTable";
 import { PackagesAdminTable } from "../../../components/Admin/PackagesAdminTable/PackagesAdminTable";
-import { SalesMetrics } from "../../../components/Admin/SalesMetrics/SalesMetrics";
+import  SalesMetrics  from "../../../components/Admin/SalesMetrics/SalesMetrics";
 import useIsMobile from "../../../hooks/useIsMobile";
 import PaymentsAdminTable from "../../../components/Admin/PaymentsAdminTable/PaymentsAdminTable";
 
 const HomePageAdmin = () => {
     const [selectedSection, setSelectedSection] = useState("");
-    const [showMetrics, setShowMetrics] = useState(false);
+    const [showMetrics, setShowMetrics] = useState(true);
     const isMobile = useIsMobile();
 
     const handleManageChange = (event) => {
@@ -47,18 +47,7 @@ const HomePageAdmin = () => {
             case "comments":
                 return <ReviewsAdminTable />;
             default:
-                return (
-                    <Typography
-                        variant="h6"
-                        sx={{
-                            mt: 3,
-                            textAlign: "center",
-                            color: "var(--primary-text-color)",
-                        }}
-                    >
-                        Selecione uma opção para gerenciar ou clique em "Ver métricas".
-                    </Typography>
-                );
+                return <SalesMetrics />;
         }
     };
 
