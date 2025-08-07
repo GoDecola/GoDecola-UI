@@ -12,7 +12,7 @@ export const login = async (credentials) => {
 
 export const logout = async () => {
   try {
-    await api.post("/auth/signout");
+    await api.post("/auth/signout", {});
   } catch (error) {
     console.error('Logout error:', error.response?.data || error.message);
   } finally {

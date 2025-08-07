@@ -41,35 +41,6 @@
     color: var(--orange-avanade);
 }
 
-.hearthIconGI {
-    color: red;
-    font-size: 30px;
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    z-index: 1000;
-}
-
-.hearthIconGI:hover {
-    color: #ab1955;
-    transform: scale(1.2);
-}
-
-.hearthIconGI2 {
-    font-size: 30px;
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    color: white;
-    z-index: 1000;
-}
-
-
-.hearthIconGI2:hover {
-    color: #ab1955;
-    transform: scale(1.2);
-}
-
 .galleryCarousel-arrow-left,
 .galleryCarousel-arrow-right {
     position: absolute;

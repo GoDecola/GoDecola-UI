@@ -5,6 +5,7 @@ import travelPackagesReducer from './slices/travelPackagesSlice';
 import bookingReducer from './slices/bookingSlice';
 import paymentReducer from './slices/paymentSlice';
 import reviewReducer from './slices/reviewSlice';
+import wishlistReducer from './slices/wishlistSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   bookings: bookingReducer,
   payments: paymentReducer,
   reviews: reviewReducer,
+  wishlist: wishlistReducer,
 });
 
 const loadToken = () => {
@@ -67,11 +69,15 @@ const store = configureStore({
           'travelPackages/uploadTravelPackageMedia/pending',
           'travelPackages/uploadTravelPackageMedia/fulfilled',
           'travelPackages/uploadTravelPackageMedia/rejected',
+          'travelPackages/updateTravelPackageById/pending',
+          'travelPackages/updateTravelPackageById/fulfilled',
+          'travelPackages/updateTravelPackageById/rejected',
         ],
         ignoredPaths: [
           'payload.formData',
           'travelPackages.formData',
           'meta.arg.formData',
+          'meta.arg.packageData',
         ],
       },
     }),

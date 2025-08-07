@@ -8,6 +8,7 @@ import Avatar from "@mui/joy/Avatar";
 import { useDispatch } from "react-redux";
 import { logout as logoutAction } from "../../../store/slices/authSlice";
 import { logout as logoutService } from "../../../services/authService";
+import { clearWishlist } from "../../../store/slices/wishlistSlice";
 
 export const HeaderLogoutButton = ({ user }) => {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ export const HeaderLogoutButton = ({ user }) => {
       console.error("Erro ao fazer logout:", error);
     } finally {
       dispatch(logoutAction());
+      dispatch(clearWishlist());
       goToHome(navigate);
     }
   };

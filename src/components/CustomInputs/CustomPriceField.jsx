@@ -7,6 +7,7 @@ export const CustomPriceField = ({
   value,
   onChange,
   mask = {},
+  disabled = false,
 }) => {
   return (
     <NumericFormat
@@ -29,6 +30,7 @@ export const CustomPriceField = ({
       decimalScale={mask.decimalScale}
       fixedDecimalScale={mask.fixedDecimalScale}
       prefix={mask.prefix}
+      disabled={disabled}
       sx={{
         width:'100%',
         input: { color: "var(--text-footer)" },

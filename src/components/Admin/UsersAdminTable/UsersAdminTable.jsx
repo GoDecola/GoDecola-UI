@@ -67,7 +67,7 @@ export const UsersAdminTable = () => {
               }}
             />
             <Tab
-              label="Criar"
+              label="Cadastro de Usuário"
               value="2"
               sx={{
                 color: "var(--text-footer)",

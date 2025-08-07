@@ -29,7 +29,7 @@ export const PackagesAdminTable = () => {
       dispatch(clearPackageDetails());
     }
   };
-
+ 
   const handleEdit = (id) => {
     setSelectedPackageId(id);
     setValue('3');

@@ -12,15 +12,14 @@ import SearchPackagesPage from "../pages/SearchPackages/SearchPackagesPage";
 import AllReviewsPage from "../pages/Review/AllReviewsPage";
 import BookingPage from "../pages/Booking/BookingPage";
 import CheckoutPage from "../pages/Checkout/CheckoutPage";
-import PaymentSuccess from "../pages/Payment/PaymentSuccess";
-import PaymentFailure from "../pages/Payment/PaymentFailure";
-import PaymentPending from "../pages/Payment/PaymentPending";
 import ProfilePage from "../pages/Profile/ProfilePage";
 import WishListPage from "../pages/WishList/WishListPage";
 import HistoryPage from "../pages/History/HistoryPage";
 import MainLayout from "../components/Layout";
 import PrivateRoute from "../components/PrivateRoute";
 import UnauthorizedPage from '../pages/Unauthorized/UnauthorizedPage'
+import PaymentSuccessPage from "../pages/Payment/PaymentSuccessPage";
+import PaymentCancelPage from "../pages/Payment/PaymentCancelPage";
 
 export const Router = () => {
   return (
@@ -42,6 +41,7 @@ export const Router = () => {
             </PrivateRoute>
           }
         />
+
         <Route
           path="checkout"
           element={
@@ -50,30 +50,23 @@ export const Router = () => {
             </PrivateRoute>
           }
         />
-        <Route
-          path="payment/success/:paymentId"
+                <Route
+          path="payment-success"
           element={
             <PrivateRoute>
-              <PaymentSuccess />
+              <PaymentSuccessPage />
             </PrivateRoute>
           }
         />
-        <Route
-          path="payment/pending/:paymentId"
+                <Route
+          path="payment-cancel"
           element={
             <PrivateRoute>
-              <PaymentPending />
+              <PaymentCancelPage />
             </PrivateRoute>
           }
         />
-        <Route
-          path="payment/failure/:paymentId"
-          element={
-            <PrivateRoute>
-              <PaymentFailure />
-            </PrivateRoute>
-          }
-        />
+        
         <Route
           path="profile"
           element={
