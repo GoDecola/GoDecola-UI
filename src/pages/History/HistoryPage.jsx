@@ -16,6 +16,8 @@ import { formatDate } from "../../utils/formatDate";
 import useIsMobile from "../../hooks/useIsMobile";
 import { PackageCard } from "../../components/PackageCard/PackageCard";
 import { goToPackageDetails } from "../../routes/coordinator";
+import { fetchMyReviews } from "../../store/actions/reviewActions";
+import { ReviewModal } from "../../components/Review/ReviewModal/ReviewModal";
 
 const HistoryPage = () => {
   const dispatch = useDispatch();
@@ -27,12 +29,19 @@ const HistoryPage = () => {
     loading,
     error,
   } = useSelector((state) => state.user);
+
+  const { myReviews } = useSelector((state) => state.reviews);
+
   const [expandedCards, setExpandedCards] = useState({});
   const [formError, setFormError] = useState(null);
+
+  const [isReviewModalOpen, setReviewModalOpen] = useState(false);
+  const [selectedPackageId, setSelectedPackageId] = useState(null);
 
   useEffect(() => {
     if (user?.id) {
       dispatch(fetchBookingByUserId(user.id));
+      dispatch(fetchMyReviews());
     } else {
       setFormError("Usuário não autenticado");
     }
@@ -43,6 +52,11 @@ const HistoryPage = () => {
       ...prev,
       [bookingId]: !prev[bookingId],
     }));
+  };
+
+  const handleOpenReviewModal = (travelPackageId) => {
+    setSelectedPackageId(travelPackageId);
+    setReviewModalOpen(true);
   };
 
   const calculateDiscountedPrice = (price, discountPercentage) =>
@@ -115,7 +129,7 @@ const HistoryPage = () => {
               variant="subtitle1"
               sx={{ color: "var(--text-footer)", mt: 1, mb: 2 }}
             >
-              Olá, {user.firstName}! Aqui estão suas reservas.
+              Olá, {user.firstName}! Aqui estão as suas reservas.
             </Typography>
           )}
         </Box>
@@ -127,376 +141,402 @@ const HistoryPage = () => {
 
         {!loading && (!bookings || bookings.length === 0) && (
           <Typography sx={{ color: "var(--no-active-tab)", mt: 10 }}>
-            Você ainda não possui nenhuma reserva ativa.
+            Você ainda não possui nenhuma reserva.
           </Typography>
         )}
 
-        {bookings?.map((booking) => (
-          <Box
-            key={booking.id}
-            sx={{
-              borderRadius: "8px",
-              p: isMobile ? 2 : 3,
-              mb: 3,
-              cursor: "pointer",
-              backgroundColor: "var(--footer-bg)",
-              transition: "box-shadow 0.3s ease-in-out",
-              "&:hover": {
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-              },
-              width: "100%",
-            }}
-          >
+        {bookings?.map((booking) => {
+          const canReview = booking.status === 'USED';
+          const hasReviewed = myReviews.some(review => review.travelPackageId === booking.travelPackage?.id);
+
+          return (
             <Box
+              key={booking.id}
               sx={{
-                display: "flex",
-                flexDirection: isMobile ? "column" : "row",
-                gap: isMobile ? 2 : 5,
-                alignItems: isMobile ? "flex-start" : "center",
+                borderRadius: "8px",
+                p: isMobile ? 2 : 3,
+                mb: 3,
+                cursor: "pointer",
+                backgroundColor: "var(--footer-bg)",
+                transition: "box-shadow 0.3s ease-in-out",
+                "&:hover": {
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                },
+                width: "100%",
               }}
             >
-              <PackageCard
-                id={booking.travelPackage?.id}
-                title={booking.travelPackage?.title || "Pacote Indisponível"}
-                price={
-                  booking.travelPackage?.price
-                    ? (booking.travelPackage.price / 100).toFixed(2)
-                    : "0,00"
-                }
-                isCurrentlyOnPromotion={
-                  booking.travelPackage?.isCurrentlyOnPromotion
-                }
-                discountPercentage={
-                  booking.travelPackage?.discountPercentage || 0
-                }
-                averageRating={booking.travelPackage?.averageRating || null}
-                imageSrc={booking.travelPackage?.mediasUrl}
-                sx={{
-                  flex: isMobile ? "1" : "0 0 30%",
-                  maxWidth: isMobile ? "100%" : "30%",
-                  borderRadius: "8px",
-                }}
-              />
               <Box
                 sx={{
-                  flex: 1,
                   display: "flex",
-                  flexDirection: "column",
-                  gap: isMobile ? 1 : 1.5,
+                  flexDirection: isMobile ? "column" : "row",
+                  gap: isMobile ? 2 : 5,
+                  alignItems: isMobile ? "flex-start" : "center",
                 }}
               >
-                <Typography
-                  variant="h6"
-                  sx={{
-                    color: "var(--primary-text-color)",
-                    fontWeight: "bold",
-                    lineHeight: isMobile ? 1.2 : 0.8,
-                    mb: isMobile ? 1 : 0,
-                  }}
-                >
-                  {booking.travelPackage?.title || "Pacote Indisponível"}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "var(--text-footer)", lineHeight: 0.5 }}
-                >
-                  <strong>Destino:</strong>{" "}
-                  {booking.travelPackage?.destination || "N/A"}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "var(--text-footer)", lineHeight: 0.5 }}
-                >
-                  <strong>Data da Reserva:</strong>{" "}
-                  {formatDate(booking.reservationDate) || "N/A"}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "var(--text-footer)", lineHeight: 0.5 }}
-                >
-                  <strong>Check-in:</strong>{" "}
-                  {formatDate(booking.checkInDate) || "N/A"}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "var(--text-footer)", lineHeight: 0.5 }}
-                >
-                  <strong>Check-out:</strong>{" "}
-                  {formatDate(booking.checkOutDate) || "N/A"}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: getStatusLabelAndColor(booking.status).color,
-                    lineHeight: 0.5,
-                  }}
-                >
-                  <strong>Status:</strong>{" "}
-                  {getStatusLabelAndColor(booking.status).label}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "var(--text-footer)", lineHeight: 0.5 }}
-                >
-                  <strong>Preço:</strong>{" "}
-                  {isBookingInPromotion(booking) ? (
-                    <>
-                      <span style={{ textDecoration: "line-through" }}>
-                        R${" "}
-                        {booking.travelPackage?.price
-                          ? (booking.travelPackage.price / 100).toFixed(2)
-                          : "0,00"}
-                      </span>{" "}
-                      <span style={{ color: "var(--orange-avanade)" }}>
-                        R${" "}
-                        {calculateDiscountedPrice(
-                          booking.travelPackage?.price
-                            ? (booking.travelPackage.price / 100).toFixed(2)
-                            : "0,00",
-                          booking.travelPackage?.discountPercentage || 0
-                        ).toFixed(2)}
-                      </span>
-                    </>
-                  ) : (
-                    `R$ ${
-                      booking.travelPackage?.price
-                        ? (booking.travelPackage.price / 100).toFixed(2)
-                        : "0,00"
-                    }`
-                  )}
-                </Typography>
-                <Button
-                  onClick={() => handleToggleExpand(booking.id)}
-                  variant="outlined"
-                  sx={{
-                    mt: 1,
-                    borderColor: "var(--orange-avanade)",
-                    color: "var(--orange-avanade)",
-                    borderRadius: "8px",
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: "rgba(255, 102, 0, 0.1)",
-                      borderColor: "var(--orange-avanade)",
-                    },
-                  }}
-                  endIcon={
-                    expandedCards[booking.id] ? <ExpandLess /> : <ExpandMore />
+                <PackageCard
+                  id={booking.travelPackage?.id}
+                  title={booking.travelPackage?.title || "Pacote Indisponível"}
+                  price={
+                    booking.travelPackage?.price
+                      ? (booking.travelPackage.price / 100).toFixed(2)
+                      : "0,00"
                   }
-                >
-                  {expandedCards[booking.id]
-                    ? "Menos Detalhes"
-                    : "Mais Detalhes"}
-                </Button>
-              </Box>
-            </Box>
-            <Collapse in={expandedCards[booking.id]}>
-              <Divider sx={{ my: 2, borderColor: "var(--orange-avanade)" }} />
-              <Box sx={{ mt: 2 }}>
-                <Typography
-                  variant="subtitle1"
+                  isCurrentlyOnPromotion={
+                    booking.travelPackage?.isCurrentlyOnPromotion
+                  }
+                  discountPercentage={
+                    booking.travelPackage?.discountPercentage || 0
+                  }
+                  averageRating={booking.travelPackage?.averageRating || null}
+                  imageSrc={booking.travelPackage?.mediasUrl}
                   sx={{
-                    color: "var(--primary-text-color)",
-                    fontWeight: "bold",
+                    flex: isMobile ? "1" : "0 0 30%",
+                    maxWidth: isMobile ? "100%" : "30%",
+                    borderRadius: "8px",
+                  }}
+                />
+                <Box
+                  sx={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: isMobile ? 1 : 1.5,
                   }}
                 >
-                  Detalhes do Pacote
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "var(--text-footer)" }}
-                >
-                  <strong>Descrição:</strong>{" "}
-                  {booking.travelPackage?.description || "N/A"}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "var(--text-footer)" }}
-                >
-                  <strong>Endereço:</strong>{" "}
-                  {[
-                    booking.travelPackage?.accommodationDetails?.address
-                      ?.addressLine1,
-                    booking.travelPackage?.accommodationDetails?.address
-                      ?.addressLine2,
-                    booking.travelPackage?.accommodationDetails?.address
-                      ?.neighborhood,
-                    booking.travelPackage?.accommodationDetails?.address?.city,
-                    booking.travelPackage?.accommodationDetails?.address?.state,
-                  ]
-                    .filter(Boolean)
-                    .join(", ") || "N/A"}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "var(--text-footer)" }}
-                >
-                  <strong>Comodidades:</strong>{" "}
-                  {[
-                    booking.travelPackage?.accommodationDetails?.hasWifi &&
-                      "Wi-Fi",
-                    booking.travelPackage?.accommodationDetails?.hasParking &&
-                      "Estacionamento",
-                    booking.travelPackage?.accommodationDetails?.hasPool &&
-                      "Piscina",
-                    booking.travelPackage?.accommodationDetails?.hasGym &&
-                      "Academia",
-                    booking.travelPackage?.accommodationDetails
-                      ?.hasRestaurant && "Restaurante",
-                    booking.travelPackage?.accommodationDetails
-                      ?.hasPetFriendly && "Pet-Friendly",
-                    booking.travelPackage?.accommodationDetails
-                      ?.hasAirConditioning && "Ar Condicionado",
-                    booking.travelPackage?.accommodationDetails
-                      ?.hasBreakfastIncluded && "Café da Manhã Incluído",
-                  ]
-                    .filter(Boolean)
-                    .join(", ") || "Nenhuma"}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "var(--text-footer)" }}
-                >
-                  <strong>Número de Banheiros:</strong>{" "}
-                  {booking.travelPackage?.accommodationDetails?.numberBaths ||
-                    "N/A"}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "var(--text-footer)" }}
-                >
-                  <strong>Número de Camas:</strong>{" "}
-                  {booking.travelPackage?.accommodationDetails?.numberBeds ||
-                    "N/A"}
-                </Typography>
-                {isBookingInPromotion(booking) && (
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: "var(--primary-text-color)",
+                      fontWeight: "bold",
+                      lineHeight: isMobile ? 1.2 : 0.8,
+                      mb: isMobile ? 1 : 0,
+                    }}
+                  >
+                    {booking.travelPackage?.title || "Pacote Indisponível"}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "var(--text-footer)", lineHeight: 0.5 }}
+                  >
+                    <strong>Destino:</strong>{" "}
+                    {booking.travelPackage?.destination || "N/A"}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "var(--text-footer)", lineHeight: 0.5 }}
+                  >
+                    <strong>Data da Reserva:</strong>{" "}
+                    {formatDate(booking.reservationDate) || "N/A"}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "var(--text-footer)", lineHeight: 0.5 }}
+                  >
+                    <strong>Check-in:</strong>{" "}
+                    {formatDate(booking.checkInDate) || "N/A"}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "var(--text-footer)", lineHeight: 0.5 }}
+                  >
+                    <strong>Check-out:</strong>{" "}
+                    {formatDate(booking.checkOutDate) || "N/A"}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: getStatusLabelAndColor(booking.status).color,
+                      lineHeight: 0.5,
+                    }}
+                  >
+                    <strong>Status:</strong>{" "}
+                    {getStatusLabelAndColor(booking.status).label}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "var(--text-footer)", lineHeight: 0.5 }}
+                  >
+                    <strong>Preço:</strong>{" "}
+                    {isBookingInPromotion(booking) ? (
+                      <>
+                        <span style={{ textDecoration: "line-through" }}>
+                          R${" "}
+                          {booking.travelPackage?.price
+                            ? (booking.travelPackage.price / 100).toFixed(2)
+                            : "0,00"}
+                        </span>{" "}
+                        <span style={{ color: "var(--orange-avanade)" }}>
+                          R${" "}
+                          {calculateDiscountedPrice(
+                            booking.travelPackage?.price
+                              ? (booking.travelPackage.price / 100).toFixed(2)
+                              : "0,00",
+                            booking.travelPackage?.discountPercentage || 0
+                          ).toFixed(2)}
+                        </span>
+                      </>
+                    ) : (
+                      `R$ ${
+                        booking.travelPackage?.price
+                          ? (booking.travelPackage.price / 100).toFixed(2)
+                          : "0,00"
+                      }`
+                    )}
+                  </Typography>
+                  <Button
+                    onClick={() => handleToggleExpand(booking.id)}
+                    variant="outlined"
+                    sx={{
+                      mt: 1,
+                      borderColor: "var(--orange-avanade)",
+                      color: "var(--orange-avanade)",
+                      borderRadius: "8px",
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: "rgba(255, 102, 0, 0.1)",
+                        borderColor: "var(--orange-avanade)",
+                      },
+                    }}
+                    endIcon={
+                      expandedCards[booking.id] ? <ExpandLess /> : <ExpandMore />
+                    }
+                  >
+                    {expandedCards[booking.id]
+                      ? "Menos Detalhes"
+                      : "Mais Detalhes"}
+                  </Button>
+                </Box>
+              </Box>
+              <Collapse in={expandedCards[booking.id]}>
+                <Divider sx={{ my: 2, borderColor: "var(--orange-avanade)" }} />
+                <Box sx={{ mt: 2 }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      color: "var(--primary-text-color)",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Detalhes do Pacote
+                  </Typography>
                   <Typography
                     variant="body2"
                     sx={{ color: "var(--text-footer)" }}
                   >
-                    <strong>Promoção:</strong>{" "}
-                    {formatDate(booking.travelPackage?.promotionStartDate) ||
-                      "N/A"}{" "}
-                    à{" "}
-                    {formatDate(booking.travelPackage?.promotionEndDate) ||
+                    <strong>Descrição:</strong>{" "}
+                    {booking.travelPackage?.description || "N/A"}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "var(--text-footer)" }}
+                  >
+                    <strong>Endereço:</strong>{" "}
+                    {[
+                      booking.travelPackage?.accommodationDetails?.address
+                        ?.addressLine1,
+                      booking.travelPackage?.accommodationDetails?.address
+                        ?.addressLine2,
+                      booking.travelPackage?.accommodationDetails?.address
+                        ?.neighborhood,
+                      booking.travelPackage?.accommodationDetails?.address?.city,
+                      booking.travelPackage?.accommodationDetails?.address?.state,
+                    ]
+                      .filter(Boolean)
+                      .join(", ") || "N/A"}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "var(--text-footer)" }}
+                  >
+                    <strong>Comodidades:</strong>{" "}
+                    {[
+                      booking.travelPackage?.accommodationDetails?.hasWifi &&
+                        "Wi-Fi",
+                      booking.travelPackage?.accommodationDetails?.hasParking &&
+                        "Estacionamento",
+                      booking.travelPackage?.accommodationDetails?.hasPool &&
+                        "Piscina",
+                      booking.travelPackage?.accommodationDetails?.hasGym &&
+                        "Academia",
+                      booking.travelPackage?.accommodationDetails
+                        ?.hasRestaurant && "Restaurante",
+                      booking.travelPackage?.accommodationDetails
+                        ?.hasPetFriendly && "Pet-Friendly",
+                      booking.travelPackage?.accommodationDetails
+                        ?.hasAirConditioning && "Ar Condicionado",
+                      booking.travelPackage?.accommodationDetails
+                        ?.hasBreakfastIncluded && "Café da Manhã Incluído",
+                    ]
+                      .filter(Boolean)
+                      .join(", ") || "Nenhuma"}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "var(--text-footer)" }}
+                  >
+                    <strong>Número de Banheiros:</strong>{" "}
+                    {booking.travelPackage?.accommodationDetails?.numberBaths ||
                       "N/A"}
                   </Typography>
-                )}
-              </Box>
-
-              <Divider sx={{ my: 2, borderColor: "var(--orange-avanade)" }} />
-              <Box sx={{ mt: 2 }}>
-                <Typography
-                  variant="subtitle1"
-                  sx={{
-                    color: "var(--primary-text-color)",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Hóspedes
-                </Typography>
-                <Box
-                  sx={{
-                    mt: 1.5,
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: 3,
-                    flexDirection: {
-                      xs: "column",
-                      sm: "row",
-                    },
-                    justifyContent: "flex-start",
-                  }}
-                >
-                  {(booking.guests || []).map((guest, index) => (
-                    <Box
-                      key={index}
-                      sx={{
-                        display: "flex",
-                        flexDirection: {
-                          xs: "column",
-                          sm: "row",
-                        },
-                        alignItems: "flex-start",
-                        gap: 2,
-                      }}
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "var(--text-footer)" }}
+                  >
+                    <strong>Número de Camas:</strong>{" "}
+                    {booking.travelPackage?.accommodationDetails?.numberBeds ||
+                      "N/A"}
+                  </Typography>
+                  {isBookingInPromotion(booking) && (
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "var(--text-footer)" }}
                     >
-                      <Box sx={{ mt: 0 }}>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: "var(--primary-text-color)",
-                            fontWeight: "medium",
-                          }}
-                        >
-                          Hóspede {index + 1}: {guest.firstName}{" "}
-                          {guest.lastName}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{ color: "var(--text-footer)" }}
-                        >
-                          <strong>Email:</strong> {guest.email || "N/A"}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{ color: "var(--text-footer)" }}
-                        >
-                          {guest.cpf ? (
-                            <>
-                              <strong>CPF:</strong> {guest.cpf}
-                            </>
-                          ) : (
-                            <>
-                              <strong>RNE:</strong> {guest.rne || "N/A"}
-                            </>
-                          )}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{ color: "var(--text-footer)" }}
-                        >
-                          <strong>Data de Nascimento:</strong>{" "}
-                          {formatDate(guest.dateOfBirth) || "N/A"}
-                        </Typography>
-                      </Box>
-
-                      {index < booking.guests.length - 1 && (
-                        <Divider
-                          orientation={{ xs: "horizontal", sm: "vertical" }}
-                          flexItem
-                          sx={{
-                            alignSelf: "stretch",
-                            borderColor: "var(--icons-login-hover)",
-                            borderWidth: "1px",
-                          }}
-                        />
-                      )}
-                    </Box>
-                  ))}
+                      <strong>Promoção:</strong>{" "}
+                      {formatDate(booking.travelPackage?.promotionStartDate) ||
+                        "N/A"}{" "}
+                      à{" "}
+                      {formatDate(booking.travelPackage?.promotionEndDate) ||
+                        "N/A"}
+                    </Typography>
+                  )}
                 </Box>
-              </Box>
-              <Button
-                onClick={() =>
-                  goToPackageDetails(navigate, booking.travelPackage?.id)
-                }
-                variant="contained"
-                sx={{
-                  mt: 2,
-                  backgroundColor: "var(--orange-avanade)",
-                  color: "white",
-                  borderRadius: "8px",
-                  textTransform: "none",
-                  "&:hover": {
-                    backgroundColor: "var(--orange-avanade-invert)",
-                  },
-                }}
-                disabled={!booking.travelPackage?.id}
-              >
-                Ver Pacote
-              </Button>
-            </Collapse>
-          </Box>
-        ))}
+
+                <Divider sx={{ my: 2, borderColor: "var(--orange-avanade)" }} />
+                <Box sx={{ mt: 2 }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      color: "var(--primary-text-color)",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Hóspedes
+                  </Typography>
+                  <Box
+                    sx={{
+                      mt: 1.5,
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 3,
+                      flexDirection: {
+                        xs: "column",
+                        sm: "row",
+                      },
+                      justifyContent: "flex-start",
+                    }}
+                  >
+                    {(booking.guests || []).map((guest, index) => (
+                      <Box
+                        key={index}
+                        sx={{
+                          display: "flex",
+                          flexDirection: {
+                            xs: "column",
+                            sm: "row",
+                          },
+                          alignItems: "flex-start",
+                          gap: 2,
+                        }}
+                      >
+                        <Box sx={{ mt: 0 }}>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              color: "var(--primary-text-color)",
+                              fontWeight: "medium",
+                            }}
+                          >
+                            Hóspede {index + 1}: {guest.firstName}{" "}
+                            {guest.lastName}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ color: "var(--text-footer)" }}
+                          >
+                            <strong>Email:</strong> {guest.email || "N/A"}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ color: "var(--text-footer)" }}
+                          >
+                            {guest.cpf ? (
+                              <>
+                                <strong>CPF:</strong> {guest.cpf}
+                              </>
+                            ) : (
+                              <>
+                                <strong>RNE:</strong> {guest.rne || "N/A"}
+                              </>
+                            )}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ color: "var(--text-footer)" }}
+                          >
+                            <strong>Data de Nascimento:</strong>{" "}
+                            {formatDate(guest.dateOfBirth) || "N/A"}
+                          </Typography>
+                        </Box>
+
+                        {index < booking.guests.length - 1 && (
+                          <Divider
+                            orientation={{ xs: "horizontal", sm: "vertical" }}
+                            flexItem
+                            sx={{
+                              alignSelf: "stretch",
+                              borderColor: "var(--icons-login-hover)",
+                              borderWidth: "1px",
+                            }}
+                          />
+                        )}
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
+                <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
+                  <Button
+                    onClick={() =>
+                      goToPackageDetails(navigate, booking.travelPackage?.id)
+                    }
+                    variant="contained"
+                    sx={{
+                      backgroundColor: "var(--orange-avanade)",
+                      color: "white",
+                      borderRadius: "8px",
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: "var(--orange-avanade-invert)",
+                      },
+                    }}
+                    disabled={!booking.travelPackage?.id}
+                  >
+                    Ver Pacote
+                  </Button>
+                  
+                  {canReview && !hasReviewed && (
+                    <Button
+                        onClick={() => handleOpenReviewModal(booking.travelPackage?.id)}
+                        variant="outlined"
+                        sx={{
+                            borderColor: "var(--orange-avanade)",
+                            color: "var(--orange-avanade)",
+                            borderRadius: "8px",
+                            textTransform: "none",
+                            "&:hover": {
+                                backgroundColor: "rgba(255, 102, 0, 0.1)",
+                                borderColor: "var(--orange-avanade)",
+                            },
+                        }}
+                        disabled={!booking.travelPackage?.id}
+                    >
+                        Adicionar Comentário
+                    </Button>
+                  )}
+                </Box>
+              </Collapse>
+            </Box>
+          )
+        })}
         <Snackbar
           open={!!formError || !!error}
           autoHideDuration={6000}
@@ -511,6 +551,13 @@ const HistoryPage = () => {
           </Alert>
         </Snackbar>
       </Box>
+
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onRequestClose={() => setReviewModalOpen(false)}
+        mode="add"
+        travelPackageId={selectedPackageId}
+      />
     </Box>
   );
 };
