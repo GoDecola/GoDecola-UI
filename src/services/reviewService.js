@@ -13,6 +13,18 @@ const reviewService = {
       }
     });
   },
+
+   updateReview: (reviewId, reviewData, token) => {
+    return api.put(`/Review/${reviewId}`, reviewData, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  deleteReview: (reviewId, token) => {
+    return api.delete(`/Review/${reviewId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+  },
 };
 
 export default reviewService;
