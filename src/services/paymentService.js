@@ -15,6 +15,14 @@ const paymentService = {
     const response = await api.get(`/payment/admin/${id}`);
     return response.data;
   },
+
+  statusUpdate: async (paymentId, status) => {
+    await api.patch(`/payment/${paymentId}/status`, JSON.stringify(status), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    console.log(`Payment status updated: ${paymentId} to ${status}`);
+    return { id: paymentId, status };
+  }
 };
 
 export default paymentService;
