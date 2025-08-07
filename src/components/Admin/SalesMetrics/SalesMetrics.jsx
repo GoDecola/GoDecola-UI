@@ -8,13 +8,14 @@ import {
 } from "@mui/material";
 import { BarChart, PieChart } from "@mui/x-charts";
 import { fetchBookings } from "../../../store/actions/bookingActions";
-import { fetchUsers } from "../../../store/actions/userActions";
 import { getAllPayments } from "../../../store/actions/paymentActions";
 import { fetchTravelPackages } from "../../../store/actions/travelPackagesActions";
 import { CustomSelect } from "../../CustomInputs/CustomSelect";
+import ExportButtons from "../../ExportButton/ExportButton";
+import { useRef } from "react";
 
 const SalesMetrics = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch();  
   const {
     bookings = [],
     loading: bookingLoading,
@@ -31,6 +32,8 @@ const SalesMetrics = () => {
     error: packageError,
   } = useSelector((state) => state.travelPackages || {});
   const [timeRange, setTimeRange] = useState("30d");
+
+  const contentRef = useRef();
 
   useEffect(() => {
     dispatch(fetchBookings());    
@@ -228,10 +231,11 @@ const SalesMetrics = () => {
         width: "100%",
         maxWidth: "1400px",
         margin: "0 auto",
-        backgroundColor: "var(--footer-bg)",                
+        backgroundColor: "var(--footer-bg)",
       }}
     >
-      <Paper
+      <ExportButtons onlyPdf targetRef={contentRef} />
+      <Paper ref={contentRef}
         sx={{
           height: "auto",
           width: "100%",

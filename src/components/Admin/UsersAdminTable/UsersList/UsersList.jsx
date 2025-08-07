@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { DataGrid } from "@mui/x-data-grid";
 import {
@@ -19,6 +19,7 @@ import {
 } from "../../../../store/actions/userActions";
 import UserModal from "./UserModal";
 import { formatDate } from "../../../../utils/formatDate";
+import ExportButtons from "../../../ExportButton/ExportButton";
 
 const UserList = ({ clients, loading, error, role }) => {
   const dispatch = useDispatch();
@@ -26,6 +27,7 @@ const UserList = ({ clients, loading, error, role }) => {
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
+  const contentRef = useRef();
 
   const handleViewClick = (id) => {
     const user = clients.find((u) => u.id === id);
@@ -59,15 +61,47 @@ const UserList = ({ clients, loading, error, role }) => {
   };
 
   const columns = [
-    { field: "id", headerName: "ID", minWidth: 300 },
-    { field: "firstName", headerName: "Nome", minWidth: 150 },
-    { field: "lastName", headerName: "Sobrenome", minWidth: 198 },
-    { field: "email", headerName: "Email", minWidth: 200 },
-    { field: "document", headerName: "Documento", minWidth: 120 },
-    { field: "passaport", headerName: "Passaporte", minWidth: 120 },
+    { field: "id", headerName: "ID", key: "id", label: "ID", minWidth: 300 },
+    {
+      field: "firstName",
+      headerName: "Nome",
+      key: "firstName",
+      label: "Nome",
+      minWidth: 150,
+    },
+    {
+      field: "lastName",
+      headerName: "Sobrenome",
+      key: "lastName",
+      label: "Sobrenome",
+      minWidth: 198,
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      key: "email",
+      label: "Email",
+      minWidth: 200,
+    },
+    {
+      field: "document",
+      headerName: "Documento",
+      key: "document",
+      label: "Documento",
+      minWidth: 120,
+    },
+    {
+      field: "passaport",
+      headerName: "Passaporte",
+      key: "passaport",
+      label: "Passaporte",
+      minWidth: 120,
+    },
     {
       field: "createdAt",
       headerName: "Data de Criação",
+      key: "createdAt",
+      label: "Data de Criação",
       minWidth: 120,
       valueFormatter: (value) => formatDate(value),
     },
@@ -113,6 +147,18 @@ const UserList = ({ clients, loading, error, role }) => {
       }))
     : [];
 
+  const exportRows = Array.isArray(clients)
+    ? clients.map((user) => ({
+        id: user?.id || "",
+        firstName: user?.firstName || "",
+        lastName: user?.lastName || "",
+        email: user?.email || "",
+        document: user?.document || "",
+        passaport: user?.passaport || "N/A",
+        createdAt: user?.createdAt ? formatDate(user.createdAt) : "",
+      }))
+    : [];
+
   const paginationModel = { page: 0, pageSize: 5 };
 
   return (
@@ -133,7 +179,17 @@ const UserList = ({ clients, loading, error, role }) => {
           Nenhum usuário disponível.
         </Typography>
       )}
+
+      <Box sx={{ mr: { xs: 0, md: 9 } }}>
+        <ExportButtons
+          data={exportRows}
+          columns={columns.filter((col) => col.key && col.label)}
+          targetRef={contentRef}
+        />
+      </Box>
+
       <DataGrid
+        ref={contentRef}
         rows={rows}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}

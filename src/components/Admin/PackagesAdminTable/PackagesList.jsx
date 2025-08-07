@@ -22,27 +22,18 @@ import { useRef } from "react";
 const PackagesList = ({ packages, loading, error, onEdit, role }) => {
   const contentRef = useRef();
   const columns = [
-    { field: "id", headerName: "ID", key: "id", label: "ID", minWidth: 70 },
-    {
-      field: "title",
-      headerName: "Título",
-      key: "title",
-      label: "Título",
-      minWidth: 218,
-    },
+    { field: "id", headerName: "ID", minWidth: 70 },
+    { field: "title", headerName: "Título", minWidth: 218 },
     {
       field: "destination",
       headerName: "Destino",
-      key: "destination",
-      label: "Destino",
       minWidth: 110,
     },
     {
       field: "price",
       headerName: "Preço em (R$)",
-      key: "price",
-      label: "Preço em (R$)",
       minWidth: 120,
+
       type: "number",
       cellClassName: "align-left",
       headerClassName: "align-left-header",
@@ -50,15 +41,11 @@ const PackagesList = ({ packages, loading, error, onEdit, role }) => {
     {
       field: "type",
       headerName: "Tipo",
-      key: "type",
-      label: "Tipo",
       minWidth: 120,
     },
     {
       field: "startDate",
       headerName: "Data de Início",
-      key: "startDate",
-      label: "Data de Início",
       minWidth: 120,
       valueFormatter: (value) =>
         new Date(value).toLocaleDateString("pt-BR", {
@@ -70,8 +57,6 @@ const PackagesList = ({ packages, loading, error, onEdit, role }) => {
     {
       field: "endDate",
       headerName: "Data de Término",
-      key: "endDate",
-      label: "Data de Término",
       minWidth: 120,
       valueFormatter: (value) =>
         new Date(value).toLocaleDateString("pt-BR", {
@@ -83,25 +68,24 @@ const PackagesList = ({ packages, loading, error, onEdit, role }) => {
     {
       field: "averageRating",
       headerName: "Avaliação",
-      key: "averageRating",
-      label: "Avaliação",
+      migrants: { type: "number" },
       minWidth: 90,
       type: "number",
-      valueGetter: () => 0,
+      valueGetter: () => 0, // Placeholder até a API retornar
     },
+
     {
       field: "isCurrentlyOnPromotion",
       headerName: "Promoção",
-      key: "isCurrentlyOnPromotion",
-      label: "Promoção",
       minWidth: 100,
-      renderCell: ({ value }) => (value ? "Sim" : "Não"),
+      renderCell: ({ value }) => {
+        return value ? "Sim" : "Não";
+      },
     },
+
     {
       field: "isActive",
       headerName: "Ativo",
-      key: "isActive",
-      label: "Ativo",
       minWidth: 80,
       renderCell: ({ value }) => (value ? "Sim" : "Não"),
     },
@@ -198,27 +182,6 @@ const PackagesList = ({ packages, loading, error, onEdit, role }) => {
 
   const paginationModel = { page: 0, pageSize: 5 };
 
-  const exportRows = packages.map((pkg) => ({
-    id: pkg.id,
-    title: pkg.title,
-    destination: pkg.destination,
-    price: pkg.price,
-    type: pkg.packageType,
-    startDate: new Date(pkg.startDate).toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }),
-    endDate: new Date(pkg.endDate).toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }),
-    averageRating: 0,
-    isCurrentlyOnPromotion: pkg.isCurrentlyOnPromotion ? "Sim" : "Não",
-    isActive: pkg.isActive ? "Sim" : "Não",
-  }));
-
   return (
     <Paper
       sx={{
@@ -228,6 +191,7 @@ const PackagesList = ({ packages, loading, error, onEdit, role }) => {
         boxShadow: "none",
       }}
     >
+        
       {loading && (
         <Typography color="var(--primary-text-color)">Carregando...</Typography>
       )}
@@ -237,14 +201,8 @@ const PackagesList = ({ packages, loading, error, onEdit, role }) => {
           Nenhum pacote disponível.
         </Typography>
       )}
-      <Box sx={{ mr: { xs: 0, md: 9 } }}>
-        <ExportButtons
-          data={exportRows}
-          columns={columns.filter((col) => col.key && col.label)}
-          targetRef={contentRef}
-        />
-      </Box>
 
+      <ExportButtons data={rows} columns={columns} targetRef={contentRef} />
       <DataGrid
         ref={contentRef}
         rows={rows}
