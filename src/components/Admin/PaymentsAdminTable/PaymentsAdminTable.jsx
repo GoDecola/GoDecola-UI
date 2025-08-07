@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { DataGrid } from "@mui/x-data-grid";
 import {
@@ -21,6 +21,7 @@ import { fetchBookings } from "../../../store/actions/bookingActions";
 import { fetchUsers } from "../../../store/actions/userActions";
 import BookingModal from "../BookingsAdminTable/BookingModal";
 import UserModal from "../UsersAdminTable/UsersList/UserModal";
+import ExportButtons from "../../ExportButton/ExportButton";
 
 const PaymentsAdminTable = () => {
   const dispatch = useDispatch();
@@ -49,6 +50,7 @@ const PaymentsAdminTable = () => {
   const [openUserDetails, setOpenUserDetails] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
+  const contentRef = useRef();
 
   useEffect(() => {
     dispatch(getAllPayments());
@@ -140,10 +142,12 @@ const PaymentsAdminTable = () => {
   };
 
   const columns = [
-    { field: "id", headerName: "ID", minWidth: 100 },
+    { field: "id", headerName: "ID", key: "id", label: "ID", minWidth: 100 },
     {
       field: "paymentDate",
       headerName: "Data do Pagamento",
+      key: "paymentDate",
+      label: "Data do Pagamento",
       minWidth: 180,
       renderCell: ({ value }) => {
         const formattedDate = convertDateString(value);
@@ -153,6 +157,8 @@ const PaymentsAdminTable = () => {
     {
       field: "amountPaid",
       headerName: "Valor Pago (R$)",
+      key: "amountPaid",
+      label: "Valor Pago (R$)",
       minWidth: 130,
       type: "string",
       cellClassName: "align-left",
@@ -161,6 +167,8 @@ const PaymentsAdminTable = () => {
     {
       field: "status",
       headerName: "Status do Pagamento",
+      key: "status",
+      label: "Status do Pagamento",
       minWidth: 180,
       renderCell: ({ row }) => (
         <Select
@@ -189,6 +197,8 @@ const PaymentsAdminTable = () => {
     {
       field: "reservationId",
       headerName: "ID da Reserva",
+      key: "reservationId",
+      label: "ID da Reserva",
       minWidth: 140,
       renderCell: ({ value }) => (
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -207,6 +217,8 @@ const PaymentsAdminTable = () => {
     {
       field: "reservationStatus",
       headerName: "Status da Reserva",
+      key: "reservationStatus",
+      label: "Status da Reserva",
       minWidth: 170,
       renderCell: ({ value }) => (
         <Typography sx={{ color: statusColors[value] || "#000000" }}>
@@ -217,6 +229,8 @@ const PaymentsAdminTable = () => {
     {
       field: "userEmail",
       headerName: "Email do Usuário",
+      key: "userEmail",
+      label: "Email do Usuário",
       minWidth: 398,
       renderCell: ({ row }) => (
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -245,6 +259,22 @@ const PaymentsAdminTable = () => {
       status: payment.status,
       reservationStatus: payment.reservationStatus,
       userId: booking ? booking.userId : "N/A",
+      userEmail: user ? user.email : "N/A",
+    };
+  });
+
+  const exportRows = payments.map((payment) => {
+    const booking = bookings.find((b) => b.id === payment.reservationId);
+    const user = users.find((u) => u.id === (booking ? booking.userId : null));
+    return {
+      id: payment?.id || "",
+      paymentDate: payment?.paymentDate
+        ? convertDateString(payment.paymentDate)
+        : "",
+      amountPaid: payment?.amountPaid ? payment.amountPaid / 100 : 0,
+      status: payment?.status || "",
+      reservationId: payment?.reservationId || "",
+      reservationStatus: payment?.reservationStatus || "",
       userEmail: user ? user.email : "N/A",
     };
   });
@@ -279,6 +309,13 @@ const PaymentsAdminTable = () => {
             Nenhum pagamento disponível.
           </Typography>
         )}
+      <Box sx={{ mr: { xs: 2, md: 16 }, mt: { xs: 1, md: 0 } }}>
+        <ExportButtons
+          data={exportRows}
+          columns={columns.filter((col) => col.key && col.label)}
+          targetRef={contentRef}
+        />
+      </Box>
       <Box sx={{ width: "100%", textAlign: "center", mt: { xs: 4, md: 1 } }}>
         <Typography
           variant="h5"

@@ -2,7 +2,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import { useNavigate } from "react-router-dom";
-import { goToHome, goToProfile } from "../../../routes/coordinator";
+import { goToLogin, goToProfile } from "../../../routes/coordinator";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/joy/Avatar";
 import { useDispatch } from "react-redux";
@@ -25,7 +25,7 @@ export const HeaderLogoutButton = ({ user }) => {
     } finally {
       dispatch(logoutAction());
       dispatch(clearWishlist());
-      goToHome(navigate);
+      goToLogin(navigate);
     }
   };
   

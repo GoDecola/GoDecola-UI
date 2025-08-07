@@ -47,8 +47,15 @@ A interface consome os dados da GoDecola API e proporciona uma experiência comp
 
 ### 🌐 Integrações e Funcionalidades
 
-- **React Google Maps API**  
-  Integração com o Google Maps para exibição de mapas, geolocalização e seleção de endereços.
+
+- **React Google Maps API**
+    exibição de mapas, geolocalização e marcadores usando a API do Google Maps.
+
+- **Nominatim**
+  serviço de geocodificação gratuita do OpenStreetMap, usado como alternativa ou complemento ao Google Maps para busca de endereços, cidades e coordenadas sem custo.
+
+- **ViaCEP**  
+  API brasileira gratuita para busca de endereços a partir de um CEP. Utilizada para preenchimento automático de formulários de endereço (logradouro, bairro, cidade, UF) com base apenas no CEP digitado.
 
 - **Swiper**  
   Biblioteca de carrosséis e sliders touch-friendly, usada para galerias, banners e navegação horizontal.
@@ -61,6 +68,21 @@ A interface consome os dados da GoDecola API e proporciona uma experiência comp
 
 - **React Datepicker**  
   Seleção de datas com interface amigável e customizável.
+
+- **Dicebear API**  
+  Geração de avatares dinâmicos e personalizados com base em identificadores (como nome ou e-mail). Utilizada para exibir imagens de perfil únicas e estilizadas sem necessidade de upload.
+
+- **html2canvas**  
+  Converte elementos HTML da página em uma imagem (canvas). Usado em conjunto com `jsPDF` para gerar PDFs com base na renderização visual da interface, como capturas de relatórios, comprovantes ou telas inteiras.
+
+- **xlsx (SheetJS)**  
+  Biblioteca para leitura e geração de arquivos Excel (`.xlsx`). Usada para exportar tabelas e dados estruturados para planilhas diretamente no navegador.
+
+- **FileSaver.js**  
+  Permite salvar arquivos localmente via JavaScript. Integrada com `xlsx` para baixar planilhas geradas sem necessidade de backend.
+
+- **jsPDF + jsPDF AutoTable**  
+  Geração de documentos PDF dinâmicos no cliente. Usada para exportar relatórios, listagens e tabelas com formatação personalizada.
 
 - **use-local-storage**  
   Hook simples para persistência de dados no `localStorage` com suporte a reatividade.
