@@ -6,7 +6,9 @@ import RatingStars from '../RatingStars'
 import ExpandableText from '../ExpandableText';
 
 export const ReviewCard = ({ review, length }) => {
-    const { id, userName, review_date, rating, comment, userCreatedAt, packageId } = review;
+    const { id, reviewDate, rating, comment, packageId, user: { firstName, lastName, createdAt }} = review;
+
+    const userName = `${firstName} ${lastName}`.trim();
 
     return (
         <div className='reviewCard'>
@@ -14,7 +16,7 @@ export const ReviewCard = ({ review, length }) => {
             <div className='reviewCardContent'>
                 <div className='starRating'>
                     <RatingStars rating={rating} />
-                    <p>• {useTimeAgo(review_date)} atrás</p>
+                    <p>• {useTimeAgo(reviewDate)} atrás</p>
                 </div>
 
                 <ExpandableText text={comment} maxLines={4} commentId={id} packageId={packageId} />
@@ -25,7 +27,7 @@ export const ReviewCard = ({ review, length }) => {
                     />
                     <div className='reviewCard_userName'>
                         <h4 className='reviewCard_name' >{userName}</h4>
-                        <p className='reviewCard_time' >{useTimeAgo(userCreatedAt)} no Go Decola</p>
+                        <p className='reviewCard_time' >{useTimeAgo(createdAt)} no Go Decola</p>
                     </div>
                 </div>
 
