@@ -31,6 +31,14 @@ export const UsersAdminTable = () => {
     <Box sx={{ width: "100%", typography: "body1", p: 2 }}>
       {loading && <Typography>Carregando...</Typography>}
       {error && <Typography color="error">Erro: {error}</Typography>}
+      <Box sx={{ width: "100%", textAlign: "center", mt: { xs: 3, md: 0 } }}>
+        <Typography
+          variant="h5"
+          sx={{ color: "var(--orange-avanade)", fontWeight: "bold", mb: 3 }}
+        >
+          Gerenciamento dos Usuários
+        </Typography>
+      </Box>
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: "var(--no-active-tab)" }}>
           <TabList

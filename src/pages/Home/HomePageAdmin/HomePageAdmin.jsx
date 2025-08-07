@@ -42,7 +42,7 @@ const HomePageAdmin = () => {
                 return <BookingsAdminTable />;
             case "payments":
                 return <PaymentsAdminTable />;
-            case "clients":
+            case "users":
                 return <UsersAdminTable />;
             case "comments":
                 return <ReviewsAdminTable />;
@@ -164,7 +164,7 @@ const HomePageAdmin = () => {
                             Pagamentos
                         </MenuItem>
                         <MenuItem
-                            value={"clients"}
+                            value={"users"}
                             sx={{
                                 "&.Mui-selected": {
                                     backgroundColor: "var(--orange-avanade)",
@@ -175,7 +175,7 @@ const HomePageAdmin = () => {
                                 },
                             }}
                         >
-                            Clientes
+                            Usuários
                         </MenuItem>
                         <MenuItem
                             value={"comments"}

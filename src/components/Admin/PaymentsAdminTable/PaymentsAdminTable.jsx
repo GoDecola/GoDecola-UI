@@ -8,33 +8,63 @@ import {
   MenuItem,
   Snackbar,
   Alert,
+  Box,
+  IconButton,
 } from "@mui/material";
+import { Visibility } from "@mui/icons-material";
 import { convertDateString } from "../../../utils/formatDate";
 import {
   getAllPayments,
   updatePaymentStatus,
 } from "../../../store/actions/paymentActions";
+import { fetchBookings } from "../../../store/actions/bookingActions";
+import { fetchUsers } from "../../../store/actions/userActions";
+import BookingModal from "../BookingsAdminTable/BookingModal";
+import UserModal from "../UsersAdminTable/UsersList/UserModal";
 
 const PaymentsAdminTable = () => {
   const dispatch = useDispatch();
-  const { payments, loading, error } = useSelector((state) => state.payments);
+  const {
+    payments = [],
+    loading: paymentLoading = false,
+    error: paymentError = null,
+  } = useSelector((state) => state.payments || {});
+  const {
+    bookings = [],
+    loading: bookingLoading = false,
+    error: bookingError = null,
+  } = useSelector((state) => state.bookings || {});
+  const {
+    users = [],
+    loading: userLoading = false,
+    error: userError = null,
+  } = useSelector((state) => state.user || {});
   const [loadingStatus, setLoadingStatus] = useState({});
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
+  const [openBookingDetails, setOpenBookingDetails] = useState(false);
+  const [openUserDetails, setOpenUserDetails] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
     dispatch(getAllPayments());
+    dispatch(fetchBookings());
+    dispatch(fetchUsers());
   }, [dispatch]);
 
   useEffect(() => {
-    if (error) {
-      setSnackbar({ open: true, message: error, severity: "error" });
+    if (paymentError || bookingError || userError) {
+      setSnackbar({
+        open: true,
+        message: paymentError || bookingError || userError,
+        severity: "error",
+      });
     }
-  }, [error]);
-  console.log("Payments data:", payments); // Debug payments data
+  }, [paymentError, bookingError, userError]);
 
   const handleStatusChange = (paymentId, newStatus) => {
     setLoadingStatus((prev) => ({ ...prev, [paymentId]: true }));
@@ -60,6 +90,44 @@ const PaymentsAdminTable = () => {
       });
   };
 
+  const handleBookingViewClick = (reservationId) => {
+    const booking = bookings.find((b) => b.id === reservationId);
+    if (booking) {
+      setSelectedBooking(booking);
+      setOpenBookingDetails(true);
+    } else {
+      setSnackbar({
+        open: true,
+        message: "Reserva não encontrada",
+        severity: "warning",
+      });
+    }
+  };
+
+  const handleUserViewClick = (userId) => {
+    const user = users.find((u) => u.id === userId);
+    if (user) {
+      setSelectedUser(user);
+      setOpenUserDetails(true);
+    } else {
+      setSnackbar({
+        open: true,
+        message: "Usuário não encontrado",
+        severity: "warning",
+      });
+    }
+  };
+
+  const handleBookingCloseDetails = () => {
+    setOpenBookingDetails(false);
+    setSelectedBooking(null);
+  };
+
+  const handleUserCloseDetails = () => {
+    setOpenUserDetails(false);
+    setSelectedUser(null);
+  };
+
   const handleSnackbarClose = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
@@ -76,7 +144,7 @@ const PaymentsAdminTable = () => {
     {
       field: "paymentDate",
       headerName: "Data do Pagamento",
-      minWidth: 160,
+      minWidth: 180,
       renderCell: ({ value }) => {
         const formattedDate = convertDateString(value);
         return <Typography>{formattedDate}</Typography>;
@@ -85,15 +153,15 @@ const PaymentsAdminTable = () => {
     {
       field: "amountPaid",
       headerName: "Valor Pago (R$)",
-      minWidth: 120,
+      minWidth: 130,
       type: "string",
       cellClassName: "align-left",
       headerClassName: "align-left-header",
     },
     {
       field: "status",
-      headerName: "Status",
-      minWidth: 170,
+      headerName: "Status do Pagamento",
+      minWidth: 180,
       renderCell: ({ row }) => (
         <Select
           value={row.status}
@@ -106,7 +174,6 @@ const PaymentsAdminTable = () => {
             "& .MuiSelect-select": {
               padding: "8px",
             },
-            
           }}
         >
           {["PENDING", "CONFIRMED", "FAILED", "CANCELLED"].map((status) => (
@@ -119,21 +186,57 @@ const PaymentsAdminTable = () => {
         </Select>
       ),
     },
-    { field: "reservationId", headerName: "ID da Reserva", minWidth: 120 },
+    {
+      field: "reservationId",
+      headerName: "ID da Reserva",
+      minWidth: 140,
+      renderCell: ({ value }) => (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <IconButton
+            onClick={() => handleBookingViewClick(value)}
+            color="default"
+            aria-label="Visualizar reserva"
+            sx={{ color: "var(--icons-login-color)" }}
+          >
+            <Visibility />
+          </IconButton>
+          <Typography>{value}</Typography>
+        </Box>
+      ),
+    },
     {
       field: "reservationStatus",
       headerName: "Status da Reserva",
-      minWidth: 150,
+      minWidth: 170,
       renderCell: ({ value }) => (
         <Typography sx={{ color: statusColors[value] || "#000000" }}>
           {value}
         </Typography>
       ),
     },
+    {
+      field: "userEmail",
+      headerName: "Email do Usuário",
+      minWidth: 398,
+      renderCell: ({ row }) => (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <IconButton
+            onClick={() => handleUserViewClick(row.userId)}
+            color="default"
+            aria-label="Visualizar usuário"
+            sx={{ color: "var(--icons-login-color)" }}
+          >
+            <Visibility />
+          </IconButton>
+          <Typography>{row.userEmail}</Typography>
+        </Box>
+      ),
+    },
   ];
 
   const rows = payments.map((payment) => {
-    console.log("Payment data:", payment); // Debug payment data
+    const booking = bookings.find((b) => b.id === payment.reservationId);
+    const user = users.find((u) => u.id === (booking ? booking.userId : null));
     return {
       id: payment.id,
       reservationId: payment.reservationId,
@@ -141,6 +244,8 @@ const PaymentsAdminTable = () => {
       amountPaid: payment.amountPaid / 100,
       status: payment.status,
       reservationStatus: payment.reservationStatus,
+      userId: booking ? booking.userId : "N/A",
+      userEmail: user ? user.email : "N/A",
     };
   });
 
@@ -155,15 +260,33 @@ const PaymentsAdminTable = () => {
         boxShadow: "none",
       }}
     >
-      {loading && (
+      {(paymentLoading || bookingLoading || userLoading) && (
         <Typography color="var(--primary-text-color)">Carregando...</Typography>
       )}
-      {error && <Typography color="error">Erro: {error}</Typography>}
-      {!loading && !error && payments.length === 0 && (
-        <Typography color="var(--primary-text-color)">
-          Nenhum pagamento disponível.
+      {(paymentError || bookingError || userError) && (
+        <Typography color="error">
+          Erro: {paymentError || bookingError || userError}
         </Typography>
       )}
+      {!paymentLoading &&
+        !bookingLoading &&
+        !userLoading &&
+        !paymentError &&
+        !bookingError &&
+        !userError &&
+        payments.length === 0 && (
+          <Typography color="var(--primary-text-color)">
+            Nenhum pagamento disponível.
+          </Typography>
+        )}
+      <Box sx={{ width: "100%", textAlign: "center", mt: { xs: 4, md: 1 } }}>
+        <Typography
+          variant="h5"
+          sx={{ color: "var(--orange-avanade)", fontWeight: "bold", mb: 3 }}
+        >
+          Gerenciamento dos Pagamentos
+        </Typography>
+      </Box>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -171,7 +294,7 @@ const PaymentsAdminTable = () => {
         pageSizeOptions={[5, 10, 15, 20]}
         sx={{
           width: "100%",
-          maxWidth: '852px',
+          maxWidth: "1330px",
           margin: "0 auto",
           p: 2,
           backgroundColor: "var(--footer-bg)",
@@ -209,6 +332,19 @@ const PaymentsAdminTable = () => {
             color: "var(--secondary-text-color)",
           },
         }}
+      />
+      <BookingModal
+        open={openBookingDetails}
+        onClose={handleBookingCloseDetails}
+        selectedBooking={selectedBooking}
+        handleCloseDetails={handleBookingCloseDetails}
+        formatDate={convertDateString}
+      />
+      <UserModal
+        open={openUserDetails}
+        onClose={handleUserCloseDetails}
+        selectedUser={selectedUser}
+        handleCloseDetails={handleUserCloseDetails}
       />
       <Snackbar
         open={snackbar.open}
