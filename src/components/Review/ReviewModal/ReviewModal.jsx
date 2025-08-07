@@ -112,12 +112,10 @@ export const ReviewModal = ({ isOpen, onRequestClose, mode = 'add', review, trav
                     >
                         <CloseIcon />
                     </IconButton>
-                    {/* ALTERADO: Aplicado o titleStyle */}
                     <Typography variant="h6" component="h2" sx={titleStyle}>
                         {modalTitle}
                     </Typography>
                     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 2 }}>
-                        {/* ALTERADO: Aplicado o ratingStyle */}
                         <Box sx={ratingStyle}>
                             <Rating
                                 name="rating"
@@ -126,7 +124,6 @@ export const ReviewModal = ({ isOpen, onRequestClose, mode = 'add', review, trav
                                 onChange={(event, newValue) => setRating(newValue)}
                             />
                         </Box>
-                        {/* ALTERADO: Aplicado o commentStyle */}
                         <TextField
                             required
                             fullWidth
@@ -137,7 +134,6 @@ export const ReviewModal = ({ isOpen, onRequestClose, mode = 'add', review, trav
                             onChange={(e) => setComment(e.target.value)}
                             sx={commentStyle}
                         />
-                        {/* ALTERADO: Aplicado o buttonStyle */}
                         <Button
                             type="submit"
                             fullWidth

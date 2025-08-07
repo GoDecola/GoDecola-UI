@@ -1,9 +1,14 @@
+p {
+  padding-left: 0;
+}
+
 .footerDesktop {
-  justify-content: center;
-  align-items: top;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   padding: 20px;
-  flex-direction: row;
-  gap: 50px;
+  gap: 40px;
   background-color: var(--footer-bg);
 }
 
@@ -11,6 +16,7 @@
   width: 30px;
   height: auto;
 }
+
 .logoIco2 {
   width: 100px;
   height: auto;
@@ -27,18 +33,21 @@
   gap: 5px;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
 }
 
 .groupLink {
   display: flex;
   gap: 10px;
   flex-direction: column;
+  align-items: center;
 }
 
 .groupLink p {
   color: var(--text-footer);
   font-size: 12px;
   font-weight: 700;
+  margin-bottom: 5px;
 }
 
 .groupNames {
@@ -47,7 +56,10 @@
   flex-direction: row;
   align-items: center;
   cursor: pointer;
-  padding-left: 10px;
+}
+
+.groupNames.team-member {
+  padding-left: 0;
 }
 
 .groupNames .iconGithub,
@@ -65,8 +77,33 @@
   color: var(--orange-avanade);
 }
 
-@media (max-width: 700px) {
+@media (min-width: 768px) {
   .footerDesktop {
-    gap: 20px;
+    width: 100%;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 30px 2%;
+    gap: 60px;
+  }
+
+  .groupLink {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .groupIco {
+    justify-content: flex-start;
+  }
+
+  .groupNames.team-member {
+    padding-left: 10px;
+  }
+
+  .verticalSeparator {
+    display: block;
+    border-left: 1px solid var(--text-footer);
+    opacity: 0.3;
+    align-self: stretch;
   }
 }
