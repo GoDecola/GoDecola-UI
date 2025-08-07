@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { checkout, getAllPayments, getPaymentById } from '../actions/paymentActions';
+import { checkout, getAllPayments, getPaymentById, updatePaymentStatus } from '../actions/paymentActions';
 import { logout } from './authSlice';
 
 const paymentSlice = createSlice({
@@ -64,7 +64,24 @@ const paymentSlice = createSlice({
       .addCase(getPaymentById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      })  
+      })
+      // Update payment state
+      .addCase(updatePaymentStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updatePaymentStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        const { id, status } = action.payload;
+        const index = state.payments.findIndex((p) => p.id === id);
+        if (index !== -1) {
+          state.payments[index] = { ...state.payments[index], status };
+        }
+      })
+      .addCase(updatePaymentStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 

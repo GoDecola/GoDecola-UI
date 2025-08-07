@@ -4,7 +4,6 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { IoStar } from "react-icons/io5";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { goToPackageDetails } from "../../routes/coordinator";
 import imageUnavailable from "../../assets/imageUnavailable.jpg";
