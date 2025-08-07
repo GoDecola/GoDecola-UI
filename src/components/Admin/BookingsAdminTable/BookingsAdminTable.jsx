@@ -125,6 +125,14 @@ const BookingsAdminTable = () => {
           Nenhuma reserva disponível.
         </Typography>
       )}
+      <Box sx={{ width: "100%", textAlign: "center" , mt: { xs: 4, md: 1 }}}>
+        <Typography
+          variant="h5"
+          sx={{ color: "var(--orange-avanade)", fontWeight: "bold", mb: 3 }}
+        >
+          Gerenciamento das Reservas
+        </Typography>
+      </Box>
       <DataGrid
         rows={rows}
         columns={columns}

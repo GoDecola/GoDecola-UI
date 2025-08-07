@@ -13,26 +13,28 @@ import { clearPackageDetails } from "../../../store/slices/travelPackagesSlice";
 import { PackageEdit } from "./PackageEdit/PackageEdit";
 import { PackageRegistration } from "./PackageRegistration/PackageRegistration";
 import PackagesList from "./PackagesList/PackagesList";
-import { parseJwt } from '../../../utils/jwt'
+import { parseJwt } from "../../../utils/jwt";
 
 export const PackagesAdminTable = () => {
-  const [value, setValue] = useState('1');
+  const [value, setValue] = useState("1");
   const [selectedPackageId, setSelectedPackageId] = useState(null);
   const dispatch = useDispatch();
-  const { packages, loading, error } = useSelector((state) => state.travelPackages);
+  const { packages, loading, error } = useSelector(
+    (state) => state.travelPackages
+  );
   const { token } = useSelector((state) => state.auth);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    if (newValue !== '3') {
+    if (newValue !== "3") {
       setSelectedPackageId(null);
       dispatch(clearPackageDetails());
     }
   };
- 
+
   const handleEdit = (id) => {
     setSelectedPackageId(id);
-    setValue('3');
+    setValue("3");
   };
 
   useEffect(() => {
@@ -44,30 +46,38 @@ export const PackagesAdminTable = () => {
   const payload = parseJwt(token);
 
   return (
-    <Box sx={{ width: '100%', typography: 'body1', p: 2 }}>
+    <Box sx={{ width: "100%", typography: "body1", p: 2 }}>
       {loading && <Typography>Carregando...</Typography>}
       {error && <Typography color="error">Erro: {error}</Typography>}
+      <Box sx={{ width: "100%", textAlign: "center" , mt: { xs: 3, md: 0 }}}>
+        <Typography
+          variant="h5"
+          sx={{ color: "var(--orange-avanade)", fontWeight: "bold", mb: 3 }}
+        >
+          Gerenciamento dos Pacotes
+        </Typography>
+      </Box>
       <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: 'var(--no-active-tab)' }}>
+        <Box sx={{ borderBottom: 1, borderColor: "var(--no-active-tab)" }}>
           <TabList
             onChange={handleChange}
             aria-label="tabs de Pacotes"
             variant="scrollable"
             scrollButtons="auto"
             sx={{
-              '.MuiTabs-flexContainer': {
-                justifyContent: { xs: 'flex-start', sm: 'center' },
+              ".MuiTabs-flexContainer": {
+                justifyContent: { xs: "flex-start", sm: "center" },
               },
-              '.MuiTab-root': {
-                minWidth: { xs: 'auto', sm: 160 },
-                padding: { xs: '6px 12px', sm: '12px 16px' },
-                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              ".MuiTab-root": {
+                minWidth: { xs: "auto", sm: 160 },
+                padding: { xs: "6px 12px", sm: "12px 16px" },
+                fontSize: { xs: "0.75rem", sm: "0.875rem" },
               },
             }}
             slotProps={{
               indicator: {
                 sx: {
-                  backgroundColor: 'var(--orange-avanade)',
+                  backgroundColor: "var(--orange-avanade)",
                 },
               },
             }}
@@ -76,9 +86,9 @@ export const PackagesAdminTable = () => {
               label="Lista de Pacotes"
               value="1"
               sx={{
-                color: 'var(--text-footer)',
-                '&.Mui-selected': {
-                  color: 'var(--orange-avanade)',
+                color: "var(--text-footer)",
+                "&.Mui-selected": {
+                  color: "var(--orange-avanade)",
                 },
               }}
             />
@@ -86,9 +96,9 @@ export const PackagesAdminTable = () => {
               label="Cadastro de Pacote"
               value="2"
               sx={{
-                color: 'var(--text-footer)',
-                '&.Mui-selected': {
-                  color: 'var(--orange-avanade)',
+                color: "var(--text-footer)",
+                "&.Mui-selected": {
+                  color: "var(--orange-avanade)",
                 },
               }}
             />
@@ -96,9 +106,9 @@ export const PackagesAdminTable = () => {
               label="Editar Pacote"
               value="3"
               sx={{
-                color: 'var(--text-footer)',
-                '&.Mui-selected': {
-                  color: 'var(--orange-avanade)',
+                color: "var(--text-footer)",
+                "&.Mui-selected": {
+                  color: "var(--orange-avanade)",
                 },
               }}
             />
