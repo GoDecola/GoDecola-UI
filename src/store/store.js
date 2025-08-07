@@ -4,6 +4,7 @@ import userReducer from './slices/userSlice';
 import travelPackagesReducer from './slices/travelPackagesSlice';
 import bookingReducer from './slices/bookingSlice';
 import paymentReducer from './slices/paymentSlice';
+import reviewReducer from './slices/reviewSlice';
 import wishlistReducer from './slices/wishlistSlice';
 
 const rootReducer = combineReducers({
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   travelPackages: travelPackagesReducer,
   bookings: bookingReducer,
   payments: paymentReducer,
+  reviews: reviewReducer,
   wishlist: wishlistReducer,
 });
 
@@ -47,6 +49,11 @@ const preloadedState = {
     payments: [],
     paymentDetails: null,
     checkoutResult: null,
+    loading: false,
+    error: null,
+  },
+  reviews: {
+    reviews: [],
     loading: false,
     error: null,
   },

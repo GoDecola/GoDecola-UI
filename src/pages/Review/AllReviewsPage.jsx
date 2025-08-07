@@ -3,34 +3,33 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import reviewsData from '../../reviews.mock.json';
 import { ReviewCardToPage } from '../../components/Review/ReviewCardToPage/ReviewCardToPage';
 import { useNavigate } from 'react-router-dom'
 import { FaArrowLeft } from 'react-icons/fa'
 import { goBack } from '../../routes/coordinator';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchReviewsByPackageId } from '../../store/actions/reviewActions';
 
 const AllReviewsPage = () => {
     const navigate = useNavigate()
     const location = useLocation();
+    const dispatch = useDispatch();
     const reviewRefs = useRef({});
-    const [filteredReviews, setFilteredReviews] = useState([]);
+
+    const { reviews: filteredReviews, loading, error } = useSelector(state => state.reviews);
+
+    const queryParams = new URLSearchParams(location.search);
+    const packageId = queryParams.get('packageId');
+    const highlightId = queryParams.get('highlightId');
 
     useEffect(() => {
-        const queryParams = new URLSearchParams(location.search);
-        const packageId = queryParams.get('packageId');
-        const highlightId = queryParams.get('highlightId');
-
-        let reviewsToDisplay = reviewsData;
-
-        if (packageId) {
-            reviewsToDisplay = reviewsData.filter(
-                review => String(review.packageId) === packageId
-            );
+        if (packageId && (!filteredReviews.length || filteredReviews[0].packageId !== Number(packageId))) {
+            dispatch(fetchReviewsByPackageId(packageId));
         }
-        setFilteredReviews(reviewsToDisplay);
+    }, [dispatch, packageId]);
 
+    useEffect(() => {
         const timeout = setTimeout(() => {
-
             if (highlightId && highlightId !== "0" && reviewRefs.current[highlightId]) {
                 reviewRefs.current[highlightId].scrollIntoView({
                     behavior: 'smooth',
@@ -40,10 +39,15 @@ const AllReviewsPage = () => {
         }, 100);
 
         return () => clearTimeout(timeout);
+    }, [highlightId, filteredReviews]); 
 
-    }, [location.search]);
+    if (loading) {
+        return <Typography>Carregando avaliações...</Typography>;
+    }
 
-    const currentQueryParams = new URLSearchParams(location.search);
+    if (error) {
+         return <Typography>Erro ao carregar avaliações.</Typography>;
+    }
 
 
     return (
@@ -72,9 +76,7 @@ const AllReviewsPage = () => {
                                     }
                                 }}
                                 sx={{
-                                    border:
-                                        String(currentQueryParams.get('highlightId')) === String(review.id) &&
-                                            String(currentQueryParams.get('highlightId')) !== "0"
+                                    border: highlightId === String(review.id) && highlightId !== "0"
                                             ? '2px solid var(--orange-avanade)'
                                             : '1px solid var(--icons-login-hover)',
                                     borderRadius: '8px',
