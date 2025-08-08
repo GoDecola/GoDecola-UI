@@ -30,16 +30,28 @@ const CheckoutPage = () => {
     console.log('Resultado da action:', result);
     console.log('Payload completo:', result.payload);
 
-    if (paymentMethod === 'card') {
-      if (result.payload?.redirectUrl) {
-        console.log('Redirecionando para Stripe:', result.payload.redirectUrl);
-        window.location.href = result.payload.redirectUrl;
-      } else {
-        console.error('redirectUrl não encontrado para card:', result.payload);
-      }
-    } else {
-      console.log(`Nenhuma ação para paymentMethod: ${paymentMethod}`);
-    }
+    //onde implementei dia 07/08/25
+if (paymentMethod === 'card') {
+  // Cartão vai para Stripe
+  if (result.payload?.redirectUrl) {
+    console.log('Redirecionando para Stripe:', result.payload.redirectUrl);
+    window.location.href = result.payload.redirectUrl;
+  }
+} else if (paymentMethod === 'PIX') {
+  // PIX vai para sua API do back (parte PIX)
+  if (result.payload?.redirectUrl) {
+    console.log('Redirecionando para PIX da API:', result.payload.redirectUrl);
+    window.location.href = result.payload.redirectUrl;
+  }
+} else if (paymentMethod === 'Boleto') {
+  // Boleto vai para sua API do back (parte Boleto)
+  if (result.payload?.redirectUrl) {
+    console.log('Redirecionando para Boleto da API:', result.payload.redirectUrl);
+    window.location.href = result.payload.redirectUrl;
+  }
+} else {
+  console.error('redirectUrl não encontrado:', result.payload);
+}
   };
 
   if (!reservationId) {
