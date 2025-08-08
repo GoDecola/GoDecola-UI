@@ -14,20 +14,34 @@ import { FaHeart } from "react-icons/fa";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import Tooltip from "@mui/material/Tooltip";
 import { parseJwt } from "../../utils/jwt";
+import { logout } from "../../services/authService";
+import { goToLogin } from "../../routes/coordinator";
 
 export const Header = () => {
-  const { isDark, toggleTheme } = useTheme();
+const { isDark, toggleTheme } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, loading } = useSelector((state) => state.user);
+  const { user, loading, fetchAttempted } = useSelector((state) => state.user);
   const { token } = useSelector((state) => state.auth);
   const payload = token ? parseJwt(token) : null;
-  
-  useEffect(() => {
-    if (token && !user && !loading) {
-      dispatch(fetchCurrentUser());
+
+ useEffect(() => {
+    if (token && !user && !loading && !fetchAttempted) {
+      if (payload?.exp * 1000 < Date.now()) {
+        dispatch(logout());
+        alert("Sua sessão expirou. Por favor, faça login novamente.");
+        goToLogin(navigate);
+      } else {
+        dispatch(fetchCurrentUser()).catch((err) => {
+          if (err.payload?.status === 404 || err.payload?.status === 401) {
+            dispatch(logout());
+            alert("Sessão inválida. Por favor, faça login novamente.");
+            goToLogin(navigate);
+          }
+        });
+      }
     }
-  }, [token, user, loading, dispatch]);
+  }, [token, user, loading, fetchAttempted, dispatch, navigate]);
 
   return (
     <header className="header">
