@@ -17,7 +17,7 @@ import WishListPage from "../pages/WishList/WishListPage";
 import HistoryPage from "../pages/History/HistoryPage";
 import MainLayout from "../components/Layout";
 import PrivateRoute from "../components/PrivateRoute";
-import UnauthorizedPage from '../pages/Unauthorized/UnauthorizedPage'
+import UnauthorizedPage from "../pages/Unauthorized/UnauthorizedPage";
 import PaymentSuccessPage from "../pages/Payment/PaymentSuccessPage";
 import PaymentCancelPage from "../pages/Payment/PaymentCancelPage";
 
@@ -50,23 +50,23 @@ export const Router = () => {
             </PrivateRoute>
           }
         />
-                <Route
-          path="payment-success"
+        <Route
+          path="payment/payment-success"
           element={
             <PrivateRoute>
               <PaymentSuccessPage />
             </PrivateRoute>
           }
         />
-                <Route
-          path="payment-cancel"
+        <Route
+          path="payment/payment-cancel"
           element={
             <PrivateRoute>
               <PaymentCancelPage />
             </PrivateRoute>
           }
         />
-        
+
         <Route
           path="profile"
           element={
