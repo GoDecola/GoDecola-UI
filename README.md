@@ -11,7 +11,9 @@ A interface consome os dados da GoDecola API e proporciona uma experiência comp
 - [Licença](#licença)
 
 ## Preview
-# TODO: colocar uma preview da tela
+
+![](https://raw.githubusercontent.com/GoDecola/GoDecola-UI/refs/heads/main/src/assets/HomePage.jpg)
+
 
 ## 🛠️ Tecnologias Utilizadas
 - **React 19**  
